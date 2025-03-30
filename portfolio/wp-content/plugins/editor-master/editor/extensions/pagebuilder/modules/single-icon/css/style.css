@@ -1,0 +1,42 @@
+
+.module-single-icon .hi-icon {
+    cursor: pointer;
+    height: 2em;
+    line-height: 2em;
+    text-align: center;
+    width: 2em; 
+    font-size: 30px;
+    color: #ccc;
+    -webkit-transition: all .35s ease;
+    -o-transition: all .35s ease;
+    transition: all .35s ease;    
+    display: inline-block;
+    vertical-align: top;
+    margin: 0
+}
+
+.single-icon-default .hi-icon {
+    height: 1em;
+    line-height: 1em;
+    width: 1em
+}
+
+.single-icon-skin1 .hi-icon {
+	background-color: transparent;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+.single-icon-skin2 .hi-icon {
+	background-color: transparent;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px; 
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}

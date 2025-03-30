@@ -1,0 +1,104 @@
+.icon-alert-error,
+.mCSB_buttonUp,
+.mCSB_buttonDown,
+.widget_pages,
+.widget_text,
+.widget_search,
+.widget_rss,
+.widget_rss1,
+.widget_rss2,
+.widget_archive,
+.widget_archive1,
+.widget_nav_menu,
+.widget_categories,
+.widget_categories1,
+.ui-icon-closethick,
+.ui-icon-triangle-1-e,
+.ui-icon-triangle-1-s,
+.ui-icon-triangle-1-n,
+.glyph-244,
+.glyph-245,
+.widget_calendar,
+.widget_recent_comments,
+.widget_recent_comments1,
+.widget_recent_entries,
+.widget_tag_cloud,
+.widget_meta,
+.widget_calendar2,
+.widget_calendar1,
+.ui-icon ,
+.widget_display_search,
+.widget_display_forums,
+.bbp_widget_login,
+.widget_display_replies,
+.widget_display_topics,
+.widget_display_stats,
+.widget_display_views,
+.toolbar .btn-default3 .fa.woocommerce,
+[class^="icon-"],.sedico , [class*="icon-"].menu_item_icon{
+    font-family: 'siteeditor' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.ui-icon-triangle-1-e:before,.icon-chevron-right:before {
+    content: "\e916";
+}
+.ui-icon-triangle-1-w:before,.icon-chevron-left:before {
+    content: "\e914";
+}
+.mCSB_buttonUp:before,.ui-icon-triangle-1-n:before,.icon-expand-more:before {
+    content: "\e92a";
+}
+.mCSB_buttonDown:before,.ui-icon-triangle-1-s:before,.icon-expand-less:before{
+    content: "\e929";
+}
+.icon-alert-error:before ,.sedico-alert:before {
+    content: "\e03d";
+}
+.ui-icon-closethick:before,.icon-delete:before {
+    content: "\ea11";
+}
+.icon-alert-success:before,.icon-check:before {
+    content: "\e96e";
+}
+.widget_search:before,.sedico-search:before {
+    content: "\e94b";
+}
+.widget_text:before,
+.sedico-title:before {
+    content: "\e90b";
+}
+.widget_pages:before,
+.sedico-pages:before {
+	content: "\e935";
+}
+
+.widget_archive1:before {
+	content: "\e97d";
+}
+.icon-font:before,
+.sedico-title:before {
+	content: "\e90b";
+}
+.toolbar .btn-default3 .sedico.woocommerce:before,
+.sedico-woo:before {
+	content: "\e9d4";
+}
+.widget_display_search:before,
+.widget_display_forums:before,
+.bbp_widget_login:before,
+.widget_display_replies:before,
+.widget_display_topics:before,
+.widget_display_stats:before,
+.widget_display_views:before,
+.sedico-bbpress:before {
+	content: "\e9d3";
+}

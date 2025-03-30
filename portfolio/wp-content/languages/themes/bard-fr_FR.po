@@ -1,0 +1,1457 @@
+# Translation of Themes - Bard in French (France)
+# This file is distributed under the same license as the Themes - Bard package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2023-01-12 09:52:19+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/4.0.0-alpha.11\n"
+"Language: fr\n"
+"Project-Id-Version: Themes - Bard\n"
+
+#. Description of the theme
+#, gp-priority: high
+msgid "Personal and Multi-Author Free WordPress Blog Theme. Perfect for personal, lifestyle, health & fitness, food, cooking, bakery, travel, beauty, fashion, wedding, photography, news, quotes blog, auto blog, small business website and any other kind of amazing blogs. Minimal, elegant & mobile friendly layout with WooCommerce shop (storefront) support will WOW and inspire your visitors. Well documented and very easy to use even for WordPress beginners. Clean and Modern Responsive design will perfectly showcase your content on any device, even on tablet, mobile & retina displays. Very fast, compatibility with many popular plugins & of course translation & RTL (right to left language) ready, coded with best SEO practices. The theme has features like Text & Image logo, Fullscreen Slider, Header image, Instagram slider widget support, footer menu support, GDPR compatibility plugins support and many more. Works perfectly with all major drag and drop page builders like Elementor, Beaver Builder, Visual Composer, SiteOrigin, Divi. You just need to write and be awesome! TEMPLATE DEMO: http://bard-free.wp-royal-themes.com/demo/"
+msgstr "Thème WordPress gratuit de blog personnel et multi-auteur. Parfait pour un blog personnel, de mode de vie, de santé et remise en forme, de nourriture, de cuisine, de boulangerie, de voyage, de beauté, de mode, de mariage, de photographie, de nouvelles, de citations, blog auto, site de petites entreprises et tout autre type de blogs étonnants. La mise en page minimale, élégante et mobile avec le support de la boutique WooCommerce (vitrine) sera impressionnante et inspirera vos visiteurs. Bien documenté et très facile à utiliser, même pour les débutants sur WordPress. Propre et moderne avec un design responsive il saura parfaitement mettre en valeur votre contenu sur n’importe quel appareil, même sur tablette, mobile & Retina. Très rapide, compatible avec de nombreuses extensions populaires et bien sûr prêt à la la traduction et RTL (langue de droite à gauche), codé avec les meilleures pratiques de référencement. Le thème a des fonctionnalités telles que le logo texte & image, le diaporama en plein écran, l’image d’en-tête, le support du widget de diaporama Instagram, le support du menu en pied de page, la prise en charge des extensions de compatibilité RGPD et bien d’autres. Fonctionne parfaitement avec tous les principaux constructeurs de page en glisser-déposer comme Elementor, Beaver Builder, Visual composer, SiteOrigin, Divi. Vous avez juste besoin d’écrire et d’être génial ! Démonstration : http://bard-free.wp-royal-themes.com/demo/"
+
+#. Theme Name of the theme
+#: inc/about/about-bard.php:430
+#, gp-priority: high
+msgid "Bard"
+msgstr "Bard"
+
+#: inc/customizer/customizer.php:601
+msgid "Enable Hidden Title (h1 missing SEO issue)"
+msgstr "Activer le titre caché (H1 manquant pour le SEO)"
+
+#: inc/about/about-bard.php:118 inc/about/about-bard.php:149
+msgid "Activate Now"
+msgstr "Activer maintenant"
+
+#: inc/about/about-bard.php:116 inc/about/about-bard.php:147
+msgid "Already Activated"
+msgstr "Déjà activé"
+
+#: inc/about/about-bard.php:143
+msgid "The most useful and easy to use Elementor Addons by WP Royal. Build any kind of page just with drag and drop. Add Grids. Galleries, Testimonials, Pricings, Countdown, etc..."
+msgstr "Les modules Elementor les plus utiles et faciles à utiliser par WP Royal. Construisez n'importe quel type de page par simple glisser-déposer. Ajoutez des grilles. Galeries, Témoignages, Prix, Compte à rebours, etc..."
+
+#: inc/about/about-bard.php:139 inc/about/about-bard.php:140
+msgid "Royal Elementor Addons"
+msgstr "Royal Elementor Modules"
+
+#: inc/about/about-bard.php:97
+msgid "Demo Import Tutorial"
+msgstr "Tutoriel d'importation de démo"
+
+#: inc/tgm/class-tgm-plugin-activation.php:3518
+msgid "All installations have been completed."
+msgstr "Toutes les installations sont terminées."
+
+#. translators: 1: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:3509
+#: inc/tgm/class-tgm-plugin-activation.php:3517
+msgid "Hide Details"
+msgstr "Masquer les détails"
+
+#. translators: 1: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:3509
+#: inc/tgm/class-tgm-plugin-activation.php:3517
+msgid "Show Details"
+msgstr "Afficher les détails"
+
+#. translators: 1: plugin name, 2: error message.
+#: inc/tgm/class-tgm-plugin-activation.php:3501
+msgid "An error occurred while installing %1$s: <strong>%2$s</strong>."
+msgstr "Une erreur s'est produite lors de l'installation de %1$s: <strong>%2$s</strong>."
+
+#. translators: 1: plugin name, 2: action number 3: total number of actions.
+#: inc/tgm/class-tgm-plugin-activation.php:3498
+msgid "Updating Plugin %1$s (%2$d/%3$d)"
+msgstr "Mise à jour de l’extension %1$s (%2$d/%3$d)"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2726
+msgid "Activate"
+msgstr "Activer"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2723
+msgid "Update"
+msgstr "Mettre à jour"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2717
+msgid "Install"
+msgstr "Installer"
+
+#. translators: %2$s: plugin name in screen reader markup
+#: inc/tgm/class-tgm-plugin-activation.php:2614
+msgid "Activate %2$s"
+msgstr "Activer %2$s"
+
+#. translators: %2$s: plugin name in screen reader markup
+#: inc/tgm/class-tgm-plugin-activation.php:2608
+msgid "Update %2$s"
+msgstr "Mettre à jour %2$s"
+
+#. translators: %2$s: plugin name in screen reader markup
+#: inc/tgm/class-tgm-plugin-activation.php:2603
+msgid "Install %2$s"
+msgstr "Installer %2$s"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2553
+msgid "Version"
+msgstr "Version"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2549
+msgid "Type"
+msgstr "Type"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2548
+msgid "Source"
+msgstr "Source"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2547
+msgid "Plugin"
+msgstr "Extension"
+
+#. translators: 1: install status, 2: update status
+#: inc/tgm/class-tgm-plugin-activation.php:2342
+msgctxt "Install/Update Status"
+msgid "%1$s, %2$s"
+msgstr "%1$s, %2$s"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2333
+msgid "Update recommended"
+msgstr "Mise à jour recommandée"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2295
+msgid "External Source"
+msgstr "Source externe"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2292
+msgid "WordPress Repository"
+msgstr "Dépôt WordPress"
+
+#. translators: %s: version number
+#: inc/tgm/class-tgm-plugin-activation.php:1982
+msgid "TGMPA v%s"
+msgstr "TGMPA v%s"
+
+#: inc/tgm/class-tgm-plugin-activation.php:1121
+#: inc/tgm/class-tgm-plugin-activation.php:2948
+msgctxt "plugin A *and* plugin B"
+msgid "and"
+msgstr "et"
+
+#: inc/tgm/class-tgm-plugin-activation.php:328
+msgid "Install Plugins"
+msgstr "Installer les extensions"
+
+#. translators: 1: plugin name, 2: action number 3: total number of actions.
+#: inc/tgm/class-tgm-plugin-activation.php:3520
+msgid "Installing Plugin %1$s (%2$d/%3$d)"
+msgstr "Installation de l’extension %1$s (%2$d/%3$d)"
+
+#. translators: 1: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:3517
+msgid "%1$s installed successfully."
+msgstr "%1$s à bien été installée."
+
+#: inc/tgm/class-tgm-plugin-activation.php:3515
+msgid "The installation process is starting. This process may take a while on some hosts, so please be patient."
+msgstr "Le processus d'installation démarre. Cette opération peut prendre quelques minutes selon votre hébergement, soyez patients."
+
+#. translators: 1: plugin name, 2: action number 3: total number of actions.
+#: inc/tgm/class-tgm-plugin-activation.php:3512
+msgid "Installing and Activating Plugin %1$s (%2$d/%3$d)"
+msgstr "Installation et activation de %1$s (%2$d/%3$d)"
+
+#: inc/tgm/class-tgm-plugin-activation.php:3510
+msgid "All installations and activations have been completed."
+msgstr "Toutes les installations et activations sont terminées."
+
+#. translators: 1: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:3509
+msgid "%1$s installed and activated successfully."
+msgstr "%1$s a bien été installée et activée."
+
+#: inc/tgm/class-tgm-plugin-activation.php:3507
+msgid "The installation and activation process is starting. This process may take a while on some hosts, so please be patient."
+msgstr "Le processus d’installation et d’activation débute. Ce processus peut prendre un certain temps chez certains hébergeurs, alors veuillez être patient."
+
+#. translators: 1: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:3503
+msgid "The installation of %1$s failed."
+msgstr "L’installation de %1$s a échoué."
+
+#: inc/tgm/class-tgm-plugin-activation.php:3158
+msgid "Plugin activation failed."
+msgstr "L'activation de l’extension a échoué."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2934
+msgid "No plugins are available to be activated at this time."
+msgstr "Aucune extension n'est prête à être activée pour le moment."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2908
+msgid "No plugins were selected to be activated. No action taken."
+msgstr "Aucune extension n’a été sélectionnée pour être activée. Aucune action ne sera effectuée."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2802
+msgid "No plugins are available to be updated at this time."
+msgstr "Aucune extension disponible à la mise à jour actuellement."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2800
+msgid "No plugins are available to be installed at this time."
+msgstr "Aucune extension disponible à l'installation actuellement."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2759
+msgid "No plugins were selected to be updated. No action taken."
+msgstr "Aucune extension sélectionnée pour la mise à jour. Pas d'action en cours."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2757
+msgid "No plugins were selected to be installed. No action taken."
+msgstr "Aucune extension n’a été sélectionnée pour être installée. Aucune action ne sera effectuée."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2684
+msgid "Upgrade message from the plugin author:"
+msgstr "Message de mise à niveau de l'auteur de l'extension :"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2554
+msgid "Status"
+msgstr "État"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2533
+msgid "No plugins to install, update or activate."
+msgstr "Aucune extension à installer, mettre à jour ou activer."
+
+#: inc/tgm/class-tgm-plugin-activation.php:2510
+msgid "Available version:"
+msgstr "Version disponible:"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2498
+msgid "Minimum required version:"
+msgstr "Version minimale obligatoire:"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2490
+msgid "Installed version:"
+msgstr "Version installée:"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2482
+msgctxt "as in: \"version nr unknown\""
+msgid "unknown"
+msgstr "Inconnu"
+
+#. translators: 1: number of plugins.
+#: inc/tgm/class-tgm-plugin-activation.php:2400
+msgid "To Activate <span class=\"count\">(%s)</span>"
+msgid_plural "To Activate <span class=\"count\">(%s)</span>"
+msgstr[0] "À activer <span class=\"count\">(%s)</span>"
+msgstr[1] "À activer <span class=\"count\">(%s)</span>"
+
+#. translators: 1: number of plugins.
+#: inc/tgm/class-tgm-plugin-activation.php:2396
+msgid "Update Available <span class=\"count\">(%s)</span>"
+msgid_plural "Update Available <span class=\"count\">(%s)</span>"
+msgstr[0] "Prête à mettre à jour <span class=\"count\">(%s)</span>"
+msgstr[1] "Prête à mettre à jour <span class=\"count\">(%s)</span>"
+
+#. translators: 1: number of plugins.
+#: inc/tgm/class-tgm-plugin-activation.php:2392
+msgid "To Install <span class=\"count\">(%s)</span>"
+msgid_plural "To Install <span class=\"count\">(%s)</span>"
+msgstr[0] "À installer <span class=\"count\">(%s)</span>"
+msgstr[1] "À installer <span class=\"count\">(%s)</span>"
+
+#. translators: 1: number of plugins.
+#: inc/tgm/class-tgm-plugin-activation.php:2388
+msgctxt "plugins"
+msgid "All <span class=\"count\">(%s)</span>"
+msgid_plural "All <span class=\"count\">(%s)</span>"
+msgstr[0] "Tous <span class=\"count\">(%s)</span> "
+msgstr[1] "Tous <span class=\"count\">(%s)</span>"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2330
+msgid "Requires Update"
+msgstr "Mise à jour nécessaire"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2327
+msgid "Required Update not Available"
+msgstr "Mise à jour obligatoire non disponible"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2319
+msgid "Installed But Not Activated"
+msgstr "Installée mais non activée"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2315
+msgid "Not Installed"
+msgstr "Non Installée"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2298
+msgid "Pre-Packaged"
+msgstr "Pré-Packagé"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2276
+msgid "Recommended"
+msgstr "Recommandée"
+
+#: inc/tgm/class-tgm-plugin-activation.php:2273
+msgid "Required"
+msgstr "Obligatoire"
+
+#: inc/tgm/class-tgm-plugin-activation.php:934
+#: inc/tgm/class-tgm-plugin-activation.php:937
+msgid "Please contact the plugin provider and ask them to package their plugin according to the WordPress guidelines."
+msgstr "Merci de contacter le fournisseur de l'extension et de lui demander d'accorder son extension avec les pratiques de WordPress."
+
+#: inc/tgm/class-tgm-plugin-activation.php:523
+msgid "Update Required"
+msgstr "Mise à jour obligatoire"
+
+#: inc/tgm/class-tgm-plugin-activation.php:522
+msgid "This plugin needs to be updated to be compatible with your theme."
+msgstr "Cette extension a besoin d'être mise à jour pour être compatible avec votre thème."
+
+#: inc/tgm/class-tgm-plugin-activation.php:397
+msgid "Please contact the administrator of this site for help."
+msgstr "Veuillez contacter l’administrateur de ce site pour de l’aide."
+
+#: inc/tgm/class-tgm-plugin-activation.php:396
+msgid "There are one or more required or recommended plugins to install, update or activate."
+msgstr "Il y a une ou plusieurs extensions nécessaires ou recommandées à installer, mettre à jour ou activer."
+
+#: inc/tgm/class-tgm-plugin-activation.php:395
+msgid "Dismiss this notice"
+msgstr "Ignorer cette notification"
+
+#. translators: 1: dashboard link.
+#: inc/tgm/class-tgm-plugin-activation.php:394
+msgid "All plugins installed and activated successfully. %1$s"
+msgstr "Toutes les extensions ont bien été installées et activées. %1$s"
+
+#. translators: 1: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:390
+msgid "No action taken. Plugin %1$s was already active."
+msgstr "Aucune action effectuée. L’extension %1$s est déjà active."
+
+#: inc/tgm/class-tgm-plugin-activation.php:388
+#: inc/tgm/class-tgm-plugin-activation.php:2952
+msgid "The following plugin was activated successfully:"
+msgid_plural "The following plugins were activated successfully:"
+msgstr[0] "L’extension suivante a bien été activée:"
+msgstr[1] "Les extensions suivantes ont bien été activées:"
+
+#: inc/tgm/class-tgm-plugin-activation.php:387
+#: inc/tgm/class-tgm-plugin-activation.php:3159
+msgid "Plugin activated successfully."
+msgstr "L’extension a bien ét activée."
+
+#: inc/tgm/class-tgm-plugin-activation.php:386
+#: inc/tgm/class-tgm-plugin-activation.php:827
+#: inc/tgm/class-tgm-plugin-activation.php:2533
+#: inc/tgm/class-tgm-plugin-activation.php:3580
+msgid "Return to the Dashboard"
+msgstr "Retourner au tableau de bord"
+
+#: inc/tgm/class-tgm-plugin-activation.php:385
+msgid "Return to Required Plugins Installer"
+msgstr "Retour à l’installateur des extensions obligatoires"
+
+#: inc/tgm/class-tgm-plugin-activation.php:380
+msgid "Begin activating plugin"
+msgid_plural "Begin activating plugins"
+msgstr[0] "Lancer l’activation de l’extension"
+msgstr[1] "Lancer l’activation des extensions"
+
+#: inc/tgm/class-tgm-plugin-activation.php:375
+msgid "Begin updating plugin"
+msgid_plural "Begin updating plugins"
+msgstr[0] "Lancer la mise à jour de l’extension"
+msgstr[1] "Lancer la mise à jour des extensions"
+
+#: inc/tgm/class-tgm-plugin-activation.php:370
+msgid "Begin installing plugin"
+msgid_plural "Begin installing plugins"
+msgstr[0] "Lancer l’installation de l’extension"
+msgstr[1] "Lancer l’installation des extentions"
+
+#. translators: 1: plugin name(s).
+#: inc/tgm/class-tgm-plugin-activation.php:364
+msgid "The following recommended plugin is currently inactive: %1$s."
+msgid_plural "The following recommended plugins are currently inactive: %1$s."
+msgstr[0] "L’extension recommandée suivante est actuellement inactive: %1$s."
+msgstr[1] "Les extensions recommandées suivantes sont actuellement inactives: %1$s."
+
+#. translators: 1: plugin name(s).
+#: inc/tgm/class-tgm-plugin-activation.php:358
+msgid "The following required plugin is currently inactive: %1$s."
+msgid_plural "The following required plugins are currently inactive: %1$s."
+msgstr[0] "L’extension nécessaire suivante est actuellement inactive: %1$s."
+msgstr[1] "Les extensions nécessaires suivantes sont actuellement inactives: %1$s."
+
+#. translators: 1: plugin name(s).
+#: inc/tgm/class-tgm-plugin-activation.php:352
+msgid "There is an update available for: %1$s."
+msgid_plural "There are updates available for the following plugins: %1$s."
+msgstr[0] "Une mise à jour est disponible pour: %1$s."
+msgstr[1] "Des mises à jour sont disponibles pour pour les extensions suivants: %1$s."
+
+#. translators: 1: plugin name(s).
+#: inc/tgm/class-tgm-plugin-activation.php:346
+msgid "The following plugin needs to be updated to its latest version to ensure maximum compatibility with this theme: %1$s."
+msgid_plural "The following plugins need to be updated to their latest version to ensure maximum compatibility with this theme: %1$s."
+msgstr[0] "L’extension suivante nécessite d’être mise à jour dans sa dernière version pour assurer une compatibilité maximum avec ce thème: %1$s."
+msgstr[1] "Les extensions suivantes doivent être mises à jour dans sa dernière version pour assurer une compatibilité maximum avec ce thème : %1$s."
+
+#. translators: 1: plugin name(s).
+#: inc/tgm/class-tgm-plugin-activation.php:340
+msgid "This theme recommends the following plugin: %1$s."
+msgid_plural "This theme recommends the following plugins: %1$s."
+msgstr[0] "Ce thème recommande l’extension suivante: %1$s."
+msgstr[1] "Ce thème recommande les extensions suivantes: %1$s."
+
+#. translators: 1: plugin name(s).
+#: inc/tgm/class-tgm-plugin-activation.php:334
+msgid "This theme requires the following plugin: %1$s."
+msgid_plural "This theme requires the following plugins: %1$s."
+msgstr[0] "Ce thème nécessite l’extension suivante: %1$s."
+msgstr[1] "Ce thème nécessite les extensions suivantes: %1$s."
+
+#: inc/tgm/class-tgm-plugin-activation.php:333
+msgid "Something went wrong with the plugin API."
+msgstr "Une erreur a eu lieu avec l’API de l’extension."
+
+#. translators: %s: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:332
+msgid "Updating Plugin: %s"
+msgstr "Mise à jour de l'extension: %s"
+
+#. translators: %s: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:330
+msgid "Installing Plugin: %s"
+msgstr "Installation de l'extension: %s"
+
+#: inc/tgm/class-tgm-plugin-activation.php:327
+msgid "Install Required Plugins"
+msgstr "Installer les extensions nécessaires"
+
+#: inc/tgm/class-tgm-plugin-activation.php:937
+msgid "The remote plugin package consists of more than one file, but the files are not packaged in a folder."
+msgstr "Le paquet distant de l’extension contient plus d’un fichier, mais les fichiers ne sont pas empaquetés dans un dossier."
+
+#: inc/tgm/class-tgm-plugin-activation.php:934
+msgid "The remote plugin package does not contain a folder with the desired slug and renaming did not work."
+msgstr "Le paquet distant de l'extension ne contient pas de dossier avec le slug désiré et le renommage n'a pas fonctionné."
+
+#. translators: 1: plugin name.
+#: inc/tgm/class-tgm-plugin-activation.php:392
+msgid "Plugin not activated. A higher version of %s is needed for this theme. Please update the plugin."
+msgstr "Extension non activée. Une version plus récente de %s est nécessaire pour ce thème. Veuillez la mettre à jour."
+
+#: inc/customizer/customizer.php:705
+msgid "Exclude Slides without Images"
+msgstr "Exclure les diapositives sans images"
+
+#: inc/about/about-bard.php:413 inc/customizer/customizer.php:340
+msgid "Contact Us"
+msgstr "Contactez-nous"
+
+#: inc/about/about-bard.php:410
+msgid "Email Support"
+msgstr "Support par e-mail"
+
+#: inc/about/about-bard.php:412 inc/customizer/customizer.php:339
+msgid "If you have any kind of theme related questions, feel free to ask."
+msgstr "Si vous avez des questions liées à ce thème, n’hésitez pas à les poser."
+
+#: comments.php:44
+msgid "Leave a Reply"
+msgstr "Laisser un commentaire"
+
+#: comments.php:45
+msgid "Comment"
+msgstr "Commentaire"
+
+#: comments.php:46
+msgid "Post Comment"
+msgstr "Laisser un commentaire"
+
+#: inc/customizer/customizer.php:1103
+msgid "Responsive"
+msgstr "Responsive"
+
+#: inc/customizer/customizer.php:1104
+msgid "These options will only apply to Mobile devices."
+msgstr "Ces options ne s’appliqueront que sur les mobiles."
+
+#: inc/customizer/customizer.php:1114
+msgid "Show Featured Slider"
+msgstr "Afficher le diaporama mis en avant"
+
+#: inc/customizer/customizer.php:1117
+msgid "Show Featured Links"
+msgstr "Afficher les liens mis en avant"
+
+#: inc/customizer/customizer.php:1120
+msgid "Show Related Posts"
+msgstr "Afficher les articles similaires"
+
+#: inc/customizer/customizer.php:519
+msgid "Theme"
+msgstr "Thème"
+
+#: inc/customizer/customizer.php:524
+msgid "Style"
+msgstr "Style"
+
+#: inc/customizer/customizer.php:797 inc/customizer/customizer.php:852
+msgid "Show Drop Caps (First Big Letter)"
+msgstr "Afficher les lettrines (première lettre grande)"
+
+#: inc/customizer/customizer.php:849
+msgid "Show Featured Image"
+msgstr "Afficher l’image mise en avant"
+
+#: inc/about/about-bard.php:86
+msgid "If you are a WordPress beginner it's highly recommended to install the theme Demo Content. This file includes: Menus, Posts, Pages, Widgets, etc."
+msgstr "Si vous débutez avec WordPress, nous vous recommandons fortement d’installer le thème avec le contenu de démonstration. Ce fichier inclus : des menus, des articles, des pages, des widgets, etc."
+
+#: inc/about/about-bard.php:80
+msgid "Setup Instagram"
+msgstr "Configurer Instagram"
+
+#: inc/about/about-bard.php:314
+msgid "Setup Random Header Images"
+msgstr "Configurer les images aléatoires d’en-tête"
+
+#: inc/customizer/customizer.php:1111
+msgid "Merge Top and Main Menus"
+msgstr "Fusionner les menus haut et principal"
+
+#: inc/about/about-bard.php:496
+msgid "View Full Feature List"
+msgstr "Voir la liste complète des fonctionnalités"
+
+#: inc/about/about-bard.php:486
+msgid "Premium Support 24/7"
+msgstr "Support Premium 24/7"
+
+#: inc/about/about-bard.php:458
+msgid "Classic, List, Grid Layouts"
+msgstr "Mises en pages classique, en liste, en grille"
+
+#: inc/about/about-bard.php:451
+msgid "Unlimited Colors Options"
+msgstr "Options de couleurs illimitées"
+
+#: inc/customizer/customizer.php:427
+msgid "Header Background"
+msgstr "Arrière-plan de l’en-tête"
+
+#: inc/about/about-bard.php:548
+msgid "..."
+msgstr "…"
+
+#: inc/about/about-bard.php:133
+msgid "Start Customizing"
+msgstr "Commencer la personnalisation"
+
+#: inc/about/about-bard.php:56
+msgid "Useful Plugins"
+msgstr "Extensions utiles"
+
+#: functions.php:308
+msgid "Left Sidebar"
+msgstr "Colonne latérale gauche"
+
+#: functions.php:298
+msgid "Right Sidebar"
+msgstr "Colonne latérale droite"
+
+#. translators: %s theme name
+#: inc/about/about-bard.php:19
+msgid "Welcome to %s"
+msgstr "Bienvenue dans %s"
+
+#: inc/customizer/customizer.php:1064
+msgid "Your Copyright Text"
+msgstr "Votre texte de droit d’auteur"
+
+#: inc/about/about-bard.php:465
+msgid "Advanced Slider Options"
+msgstr "Options de diaporama avancées"
+
+#: index.php:78
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Désolé, mais rien ne correspond à vos critères de recherche. Veuillez réessayer avec d’autres mots-clés."
+
+#. translators: %1$s: theme name, %2$s link, %3$s theme author
+#: footer.php:55
+msgid "%1$s Theme by <a href=\"%2$s\">%3$s.</a>"
+msgstr "Thème %1$s par <a href=\"%2$s\">%3$s.</a>"
+
+#. translators: %s link
+#: inc/about/about-bard.php:164 inc/customizer/customizer.php:362
+msgid "Bard Pro's powerful setup allows you to easily create unique looking sites. Here are a few included examples that can be installed with one click in the Pro Version. More details in the <a href=\"%s\" target=\"_blank\" >Theme Documentation</a>"
+msgstr "La puissante configuration de Bard Pro vous permet de créer facilement des sites avec un aspect unique. Voici quelques exemples inclus qui peuvent être installés en un seul clic dans la version Pro. Plus de détails dans la <a href=\"%s\" target=\"_blank\" >documentation du thème</a>"
+
+#: 404.php:8
+msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
+msgstr "Il semblerait que nous ne soyons pas en mesure de trouver votre contenu. Essayez en lançant une recherche."
+
+#. translators: %1$s: theme name, %2$s link
+#: functions.php:103
+msgid "Thank you for choosing %1$s! To fully take advantage of the best our theme can offer please make sure you visit our <a href=\"%2$s\">Welcome page</a>"
+msgstr "Merci d’avoir choisi%1$s ! Pour profiter pleinement du meilleur de ce que notre thème peut offrir, veuillez visiter notre <a href=\"%2$s\">page de bienvenue</a>"
+
+#. translators: %s theme name
+#: functions.php:108
+msgid "Get started with %s"
+msgstr "Premiers pas avec %s"
+
+#. translators: %s theme name
+#: inc/about/about-bard.php:75 inc/customizer/customizer.php:353
+msgid "Need more details? Please check our full documentation for detailed information on how to use %s."
+msgstr "Besoin de plus de détails ? Lisez notre documentation pour des informations détaillées sur l’utilisation de %s."
+
+#. translators: %s theme name
+#: inc/about/about-bard.php:129
+msgid "%s supports the Theme Customizer for all theme settings. Click \"Customize\" to personalize your site."
+msgstr "%s prend en charge la personnalisation de thème pour tous les réglages du thème. Cliquez sur « Personnaliser » pour vous lancer."
+
+#: inc/about/about-bard.php:173 inc/about/about-bard.php:180
+#: inc/about/about-bard.php:187 inc/about/about-bard.php:194
+#: inc/about/about-bard.php:201 inc/about/about-bard.php:208
+#: inc/about/about-bard.php:215 inc/about/about-bard.php:222
+#: inc/about/about-bard.php:229 inc/about/about-bard.php:236
+#: inc/about/about-bard.php:243 inc/about/about-bard.php:250
+#: inc/about/about-bard.php:257 inc/about/about-bard.php:264
+msgid "Live Preview"
+msgstr "Prévisualisation en direct"
+
+#: inc/about/about-bard.php:403 inc/customizer/customizer.php:369
+msgid "Want to get the gist on the latest theme changes? Just consult our changelog below to get a taste of the recent fixes and features implemented."
+msgstr "Vous voulez obtenir l’essentiel sur les derniers changements de thème ? Il suffit de consulter notre journal ci-dessous pour avoir un aperçu des correctifs récents et des nouvelles fonctionnalités mises en œuvre."
+
+#: inc/customizer/customizer.php:885
+msgid "Open Social Links in New Window "
+msgstr "Ouvrir les liens sociaux dans une nouvelle fenêtre "
+
+#: functions.php:52
+msgid "Footer Menu"
+msgstr "Menu du pied de page"
+
+#: inc/customizer/customizer.php:1023
+msgid "Uppercase"
+msgstr "Majuscules"
+
+#: inc/customizer/customizer.php:1020
+msgid "Italic"
+msgstr "Italique"
+
+#: inc/customizer/customizer.php:344
+msgid "Demo Preview Page."
+msgstr "Page d’aperçu de la démo."
+
+#: inc/customizer/customizer.php:344
+msgid "All you need for startup: Demo Import, Video Tutorials and more. To see what Bard theme can offer, please visit a "
+msgstr "Tout ce dont vous avez besoin pour le démarrage : Import de démo, tutoriels vidéo et plus encore. Pour voir ce que le thème Bard peut offrir, veuillez visiter "
+
+#: inc/customizer/customizer.php:343
+msgid "Demo Import / Getting Started"
+msgstr "Import de démo/mise en route"
+
+#: inc/about/about-bard.php:333
+msgid "Translate The Theme"
+msgstr "Traduire le thème"
+
+#: inc/about/about-bard.php:329
+msgid "Create Blog Post"
+msgstr "Créer un article de blog"
+
+#: inc/about/about-bard.php:280
+msgid "Setup Instagram Widget"
+msgstr "Configurer le widget Instagram"
+
+#: inc/about/about-bard.php:324
+msgid "Setup Featured Links"
+msgstr "Configurer les liens mis en avant"
+
+#: inc/about/about-bard.php:319
+msgid "Setup Featured Slider"
+msgstr "Configurer le diaporama mis en avant"
+
+#: inc/about/about-bard.php:304
+msgid "Setup Colors"
+msgstr "Configurer les couleurs"
+
+#: inc/about/about-bard.php:299
+msgid "Setup Copyright"
+msgstr "Configurer le copyright"
+
+#: inc/about/about-bard.php:294
+msgid "Setup Social Media"
+msgstr "Configurer les réseaux sociaux"
+
+#: inc/about/about-bard.php:289
+msgid "Setup Logo Image"
+msgstr "Configurer l’image du logo"
+
+#: inc/about/about-bard.php:286 inc/about/about-bard.php:291
+#: inc/about/about-bard.php:296 inc/about/about-bard.php:301
+#: inc/about/about-bard.php:306 inc/about/about-bard.php:311
+#: inc/about/about-bard.php:316 inc/about/about-bard.php:321
+#: inc/about/about-bard.php:326
+msgid "Customize"
+msgstr "Personnaliser"
+
+#: functions.php:368 functions.php:388 inc/about/about-bard.php:284
+msgid "Setup Menu"
+msgstr "Configurer le menu"
+
+#: inc/about/about-bard.php:276 inc/about/about-bard.php:281
+#: inc/about/about-bard.php:285 inc/about/about-bard.php:290
+#: inc/about/about-bard.php:295 inc/about/about-bard.php:300
+#: inc/about/about-bard.php:305 inc/about/about-bard.php:310
+#: inc/about/about-bard.php:315 inc/about/about-bard.php:320
+#: inc/about/about-bard.php:325 inc/about/about-bard.php:330
+#: inc/about/about-bard.php:334
+msgid "Watch Video"
+msgstr "Voir la vidéo"
+
+#: inc/about/about-bard.php:161
+msgid "Bard Pro - Predefined Styles"
+msgstr "Bard Pro - Styles prédéfinis"
+
+#: inc/about/about-bard.php:94
+msgid "Install Demo Import Plugin"
+msgstr "Installer l’extension d’import de démo"
+
+#: inc/about/about-bard.php:92
+msgid "Activate Demo Import Plugin"
+msgstr "Activer l’extension d’import de démo"
+
+#: inc/about/about-bard.php:90
+msgid "Go to Import page"
+msgstr "Aller à la page d’import"
+
+#: inc/about/about-bard.php:53
+msgid "Video Tutorials"
+msgstr "Tutoriels vidéos"
+
+#. translators: %s theme name
+#: inc/about/about-bard.php:20
+msgid "Theme Demo Preview"
+msgstr "Aperçu de démo du thème"
+
+#: inc/about/about-bard.php:277 inc/customizer/customizer.php:345
+msgid "Get Started"
+msgstr "Premiers pas"
+
+#: inc/about/about-bard.php:309
+msgid "Setup Header Image"
+msgstr "Configurer l’image d’en-tête"
+
+#: inc/customizer/customizer.php:696
+msgid "On"
+msgstr "On"
+
+#: inc/customizer/customizer.php:695
+msgid "Off"
+msgstr "Off"
+
+#: inc/about/about-bard.php:263
+msgid "Style 10"
+msgstr "Style 10"
+
+#: inc/about/about-bard.php:256
+msgid "Style 9"
+msgstr "Style 9"
+
+#: inc/about/about-bard.php:249
+msgid "Style 8"
+msgstr "Style 8"
+
+#: inc/about/about-bard.php:242
+msgid "Style 7"
+msgstr "Style 7"
+
+#: inc/about/about-bard.php:235
+msgid "Style 6"
+msgstr "Style 6"
+
+#: inc/about/about-bard.php:228
+msgid "Style 5"
+msgstr "Style 5"
+
+#: inc/about/about-bard.php:221
+msgid "Style 4"
+msgstr "Style 4"
+
+#: inc/about/about-bard.php:214
+msgid "Style 3"
+msgstr "Style 3"
+
+#: inc/about/about-bard.php:207
+msgid "Style 2"
+msgstr "Style 2"
+
+#: inc/about/about-bard.php:200
+msgid "Style 1"
+msgstr "Style 1"
+
+#: inc/about/about-bard.php:193
+msgid "Dark"
+msgstr "Sombre"
+
+#: inc/about/about-bard.php:186
+msgid "Lifestyle"
+msgstr "Style de vie"
+
+#: inc/about/about-bard.php:179
+msgid "Food"
+msgstr "Nourriture"
+
+#: inc/about/about-bard.php:172
+msgid "Main"
+msgstr "Principal"
+
+#: inc/about/about-bard.php:169 inc/tgm/class-tgm-plugin-activation.php:2321
+msgid "Active"
+msgstr "Activer"
+
+#: inc/customizer/customizer.php:359 inc/customizer/customizer.php:365
+msgid "Predefined Styles"
+msgstr "Styles prédéfinis"
+
+#: inc/customizer/customizer.php:814
+msgid "Random"
+msgstr "Aléatoire"
+
+#: inc/customizer/customizer.php:1007
+msgid "Arizonia"
+msgstr "Arizona"
+
+#: inc/customizer/customizer.php:616
+msgid "Logo Options"
+msgstr "Options du logo"
+
+#: inc/customizer/customizer.php:585
+msgid "Header Options"
+msgstr "Options d’en-tête"
+
+#: inc/preview/demo-preview.php:79
+msgid "Pages"
+msgstr "Pages"
+
+#: inc/preview/demo-preview.php:74 inc/preview/demo-preview.php:86
+msgid "Categories"
+msgstr "Catégories"
+
+#: inc/preview/demo-preview.php:73 inc/preview/demo-preview.php:80
+#: inc/preview/demo-preview.php:85
+msgid "Archives"
+msgstr "Archives"
+
+#: inc/preview/demo-preview.php:72 inc/preview/demo-preview.php:84
+msgid "Recent Posts"
+msgstr "Articles récents"
+
+#: inc/customizer/customizer.php:1059
+msgid "Show Scroll-Top Button"
+msgstr "Afficher le bouton de retour en haut"
+
+#: inc/customizer/customizer.php:641
+msgid "Right"
+msgstr "Droite"
+
+#: inc/customizer/customizer.php:424
+msgid "Header Text Hover Color"
+msgstr "Couleur de texte d’en-tête au survol"
+
+#: comments.php:12
+msgid "% Comments"
+msgstr "% commentaires"
+
+#: templates/single/single-navigation.php:32
+msgid "Newer"
+msgstr "Plus récent"
+
+#: templates/single/single-navigation.php:17
+msgid "Previous"
+msgstr "Précédent"
+
+#: templates/single/post-content.php:63
+msgid "By"
+msgstr "Par"
+
+#: templates/header/main-navigation.php:32
+msgid "Search"
+msgstr "Rechercher"
+
+#: templates/header/main-navigation.php:12
+msgid "Alt Sidebar"
+msgstr "Barre Alt"
+
+#: templates/grid/blog-pagination.php:78
+msgid "Load More"
+msgstr "Voir la suite"
+
+#: templates/grid/blog-pagination.php:72
+msgid "Newer Posts"
+msgstr "Articles plus récents"
+
+#: templates/grid/blog-pagination.php:66
+msgid "Older Posts"
+msgstr "Articles plus anciens"
+
+#: templates/grid/blog-pagination.php:33
+msgid "Loading..."
+msgstr "Chargement..."
+
+#: templates/grid/blog-list.php:59 templates/header/featured-slider.php:95
+msgid "read more"
+msgstr "lire la suite"
+
+#: templates/grid/blog-grid.php:50 templates/grid/blog-list.php:24
+msgid "By "
+msgstr "Par "
+
+#: templates/grid/blog-full.php:61 templates/grid/blog-grid.php:26
+#: templates/grid/blog-list.php:35 templates/single/post-content.php:69
+msgid "Comments"
+msgstr "Commentaires"
+
+#: templates/grid/blog-full.php:61 templates/grid/blog-grid.php:26
+#: templates/grid/blog-list.php:35 templates/single/post-content.php:69
+msgid "1 Comment"
+msgstr "1 commentaire"
+
+#: templates/grid/blog-full.php:43
+msgid "Continue Reading"
+msgstr "Lire la suite"
+
+#: single.php:34 templates/grid/blog-full.php:67
+#: templates/grid/blog-list.php:64
+msgid "You May Also Like"
+msgstr "Vous aimerez aussi"
+
+#: page.php:41 templates/single/post-content.php:49
+msgid "Pages:"
+msgstr "Pages :"
+
+#: inc/customizer/customizer.php:1094
+msgid "Preloading Animation"
+msgstr "Animation de pré-chargement"
+
+#: inc/customizer/customizer.php:1088
+msgid "Preloader"
+msgstr "Pré-chargeur"
+
+#: inc/customizer/customizer.php:1074
+msgid "Footer Options"
+msgstr "Options du pied"
+
+#: inc/customizer/customizer.php:1053
+msgid "Logo Upload"
+msgstr "Téléverser le logo"
+
+#: inc/customizer/customizer.php:606 inc/customizer/customizer.php:1056
+msgid "Show Social Icons"
+msgstr "Afficher les icônes sociales"
+
+#: inc/customizer/customizer.php:1047
+msgid "Page Footer"
+msgstr "Pied de page"
+
+#: inc/customizer/customizer.php:1033
+msgid "Typography Options"
+msgstr "Options de typographie"
+
+#: inc/customizer/customizer.php:1014 inc/customizer/customizer.php:1017
+msgid "Font Family"
+msgstr "Famille de police"
+
+#: inc/customizer/customizer.php:1010
+msgid "Kalam"
+msgstr "Kalam"
+
+#: inc/customizer/customizer.php:1009
+msgid "Rokkitt"
+msgstr "Rokkitt"
+
+#: inc/customizer/customizer.php:1008
+msgid "Open Sans"
+msgstr "Open Sans"
+
+#: inc/customizer/customizer.php:1001
+msgid "Typography"
+msgstr "Typographie"
+
+#: inc/customizer/customizer.php:960 inc/customizer/customizer.php:969
+#: inc/customizer/customizer.php:978 inc/customizer/customizer.php:987
+msgid "Select Icon"
+msgstr "Sélection d’icône"
+
+#: inc/customizer/customizer.php:879
+msgid "Social Media"
+msgstr "Réseaux sociaux"
+
+#: inc/customizer/customizer.php:818 inc/customizer/customizer.php:870
+msgid "Related Posts - Display"
+msgstr "Articles similaires - Affichage"
+
+#: inc/customizer/customizer.php:843
+msgid "Single Post"
+msgstr "Article unique"
+
+#: inc/customizer/customizer.php:828
+msgid "Blog Options "
+msgstr "Options du blog "
+
+#: inc/customizer/customizer.php:813
+msgid "Related"
+msgstr "Similaires"
+
+#: inc/customizer/customizer.php:809 inc/customizer/customizer.php:864
+msgid "Show Author"
+msgstr "Afficher la boîte d’auteur"
+
+#: inc/customizer/customizer.php:806 inc/customizer/customizer.php:861
+msgid "Show Comments"
+msgstr "Afficher les commentaires"
+
+#: inc/customizer/customizer.php:803 inc/customizer/customizer.php:858
+msgid "Show Date"
+msgstr "Afficher la date"
+
+#: inc/customizer/customizer.php:800 inc/customizer/customizer.php:855
+msgid "Show Categories"
+msgstr "Afficher les catégories"
+
+#: inc/customizer/customizer.php:794
+msgid "Post Pagination"
+msgstr "Pagination d’article"
+
+#: inc/customizer/customizer.php:790
+msgid "Numeric"
+msgstr "Numérique"
+
+#: inc/customizer/customizer.php:520 inc/customizer/customizer.php:789
+msgid "Default"
+msgstr "Par défaut"
+
+#: inc/customizer/customizer.php:786
+msgid "Post Description"
+msgstr "Description de l’article"
+
+#: inc/customizer/customizer.php:782
+msgid "Post Content"
+msgstr "Contenu de l’article"
+
+#: inc/customizer/customizer.php:780 inc/customizer/customizer.php:812
+msgid "None"
+msgstr "Aucun"
+
+#: inc/customizer/customizer.php:777
+msgid "Make First Post Full Width"
+msgstr "Faire le premier article en pleine largeur"
+
+#: inc/customizer/customizer.php:744 inc/customizer/customizer.php:753
+#: inc/customizer/customizer.php:762
+msgid "Image"
+msgstr "Image"
+
+#: inc/customizer/customizer.php:741 inc/customizer/customizer.php:750
+#: inc/customizer/customizer.php:759 inc/customizer/customizer.php:963
+#: inc/customizer/customizer.php:972 inc/customizer/customizer.php:981
+#: inc/customizer/customizer.php:990
+msgid "URL"
+msgstr "URL"
+
+#: inc/customizer/customizer.php:738 inc/customizer/customizer.php:747
+#: inc/customizer/customizer.php:756 inc/customizer/customizer.php:966
+#: inc/customizer/customizer.php:975 inc/customizer/customizer.php:984
+#: inc/customizer/customizer.php:993
+msgid "Title"
+msgstr "Titre"
+
+#: inc/customizer/customizer.php:729 inc/customizer/customizer.php:735
+msgid "Featured Links"
+msgstr "Liens mis en avant"
+
+#: inc/customizer/customizer.php:715
+msgid "Slider Options "
+msgstr "Options du diaporama "
+
+#: inc/customizer/customizer.php:702
+msgid "Show Pagination Dots"
+msgstr "Afficher les points de pagination"
+
+#: inc/customizer/customizer.php:699
+msgid "Show Navigation Arrows"
+msgstr "Afficher les flèches de navigation"
+
+#: inc/customizer/customizer.php:689
+msgid "Number of Slides"
+msgstr "Nombre de diapositives"
+
+#: inc/customizer/customizer.php:686
+msgid "Select Category"
+msgstr "Sélectionner une catégorie"
+
+#: inc/customizer/customizer.php:677
+msgid "Display Posts"
+msgstr "Afficher les articles"
+
+#: inc/customizer/customizer.php:663 inc/customizer/customizer.php:669
+msgid "Featured Slider"
+msgstr "Diaporama mis en avant"
+
+#: inc/customizer/customizer.php:654
+msgid "Show Search Icon"
+msgstr "Afficher l’icône de recherche"
+
+#: inc/customizer/customizer.php:645
+msgid "Align"
+msgstr "Alignement"
+
+#: inc/customizer/customizer.php:640
+msgid "Center"
+msgstr "Centre"
+
+#: inc/customizer/customizer.php:639
+msgid "Left"
+msgstr "Gauche"
+
+#: inc/customizer/customizer.php:630 inc/customizer/customizer.php:636
+msgid "Main Navigation"
+msgstr "Navigation principale"
+
+#: inc/customizer/customizer.php:598
+msgid "Width"
+msgstr "Largueur"
+
+#: inc/customizer/customizer.php:575
+msgid "Enable Parallax Scrolling"
+msgstr "Activer le défilement Parallax"
+
+#: inc/customizer/customizer.php:572
+msgid "Background Image Size"
+msgstr "Taille d’image d’arrière-plan"
+
+#: inc/customizer/customizer.php:567
+msgid "Cover"
+msgstr "Couverture"
+
+#: inc/customizer/customizer.php:564
+msgid "Page Header"
+msgstr "En-tête de page"
+
+#: inc/customizer/customizer.php:548 inc/customizer/customizer.php:554
+msgid "Top Bar"
+msgstr "Barre haute"
+
+#: inc/customizer/customizer.php:534
+msgid "Layout Options"
+msgstr "Options de mise en page"
+
+#: inc/customizer/customizer.php:516
+msgid "Footer Width"
+msgstr "Largeur du pied"
+
+#: inc/customizer/customizer.php:513
+msgid "Single Content Width"
+msgstr "Largeur de contenu unique"
+
+#: inc/customizer/customizer.php:510
+msgid "Content Width"
+msgstr "Largeur de contenu"
+
+#: inc/customizer/customizer.php:507
+msgid "Featured Links Width"
+msgstr "Largeur des liens mis en avant"
+
+#: inc/customizer/customizer.php:504
+msgid "Featured Slider Width"
+msgstr "Largeur de diaporama mis en avant"
+
+#: inc/customizer/customizer.php:496
+msgid "Header Width"
+msgstr "Largeur d’en-tête"
+
+#: inc/customizer/customizer.php:492 inc/customizer/customizer.php:500
+msgid "Boxed"
+msgstr "Encadré"
+
+#: inc/customizer/customizer.php:491
+msgid "Contained"
+msgstr "Contenu"
+
+#: inc/customizer/customizer.php:490 inc/customizer/customizer.php:499
+msgid "Full"
+msgstr "Complet"
+
+#: inc/customizer/customizer.php:487 inc/customizer/customizer.php:771
+msgid "Blog Page"
+msgstr "Page de blog"
+
+#: inc/customizer/customizer.php:483
+msgid "List Style"
+msgstr "Style de liste"
+
+#: inc/customizer/customizer.php:482
+msgid "2 Columns"
+msgstr "2 colonnes"
+
+#: inc/customizer/customizer.php:478
+msgid "Enable Sticky Sidebar"
+msgstr "Activer la barre fixe"
+
+#: inc/customizer/customizer.php:475
+msgid "Sidebar Width"
+msgstr "Largeur de la barre"
+
+#: inc/customizer/customizer.php:469
+msgid "General Layouts"
+msgstr "Mises en page générales"
+
+#: inc/customizer/customizer.php:416
+msgid "Accent"
+msgstr "Accent"
+
+#: inc/customizer/customizer.php:410 inc/customizer/customizer.php:455
+msgid "Colors"
+msgstr "Couleurs"
+
+#: inc/customizer/customizer.php:334
+msgid "There are lots of reasons to upgrade to Pro version. Unlimited custom Colors, rich Typography options, multiple variation of Blog Feed layout and way much more. Also Premium Support included."
+msgstr "Il y a beaucoup de raisons de passer à la version Pro. Couleurs personnalisées illimitées, riches options de typographie, variations multiples de la mise en page du flux du blog et beaucoup plus. Support premium inclus également."
+
+#: inc/customizer/customizer.php:333
+msgid "Upgrade"
+msgstr "Mise à niveau"
+
+#: inc/customizer/customizer.php:320
+msgid "See Bard PRO"
+msgstr "Voir Bard PRO"
+
+#: functions.php:165 inc/about/about-bard.php:151 inc/about/about-bard.php:543
+msgid "Install Now"
+msgstr "Installer maintenant"
+
+#: inc/about/about-bard.php:540
+msgid "Installed"
+msgstr "Installé"
+
+#: inc/about/about-bard.php:479
+msgid "Sticky Navigation"
+msgstr "Navigation fixe"
+
+#: inc/about/about-bard.php:472
+msgid "Advanced WooCommerce Support"
+msgstr "Support WooCommerce avancé"
+
+#: inc/about/about-bard.php:437
+msgid "800+ Google Fonts"
+msgstr "+ de 800 polices Google"
+
+#: inc/about/about-bard.php:444
+msgid "Header Background Image/Color/Video"
+msgstr "Image/couleur/vidéo d’arrière-plan d’en-tête"
+
+#: inc/about/about-bard.php:431
+msgid "Bard Pro"
+msgstr "Bard Pro"
+
+#: inc/about/about-bard.php:427 inc/customizer/customizer.php:335
+msgid "Get Bard Pro"
+msgstr "Obtenez Bard Pro"
+
+#: inc/about/about-bard.php:401 inc/about/about-bard.php:404
+#: inc/customizer/customizer.php:368 inc/customizer/customizer.php:370
+msgid "Changelog"
+msgstr "Journal de changements"
+
+#: inc/about/about-bard.php:79
+msgid "Read Full Documentation"
+msgstr "Lire la documentation"
+
+#: inc/about/about-bard.php:72 inc/customizer/customizer.php:348
+#: inc/customizer/customizer.php:356
+msgid "Documentation"
+msgstr "Documentation"
+
+#: inc/about/about-bard.php:394
+msgid "Go to Support Forums"
+msgstr "Accéder aux forums de support"
+
+#: inc/about/about-bard.php:391
+msgid "Forums"
+msgstr "Forums"
+
+#: inc/about/about-bard.php:126
+msgid "Theme Customizer"
+msgstr "Personnalisation du thème"
+
+#: inc/about/about-bard.php:84 inc/about/about-bard.php:275
+msgid "Demo Content"
+msgstr "Contenu de démo"
+
+#: inc/about/about-bard.php:62
+msgid "Free vs Pro"
+msgstr "Gratuit vs Pro"
+
+#: inc/about/about-bard.php:59 inc/customizer/customizer.php:338
+msgid "Support"
+msgstr "Support"
+
+#: inc/about/about-bard.php:50
+msgid "Getting Started"
+msgstr "Guide de démarrage"
+
+#: inc/about/about-bard.php:5 inc/customizer/customizer.php:384
+msgid "About Bard"
+msgstr "À propos de Bard"
+
+#: functions.php:796
+msgid "Your comment is awaiting moderation."
+msgstr "Votre commentaire est en attente de validation."
+
+#: functions.php:764 functions.php:787
+msgid "[Edit]"
+msgstr "[Modifier]"
+
+#: functions.php:763 functions.php:784
+msgid "&nbsp;at&nbsp;"
+msgstr "&nbsp; à &nbsp;"
+
+#: functions.php:761
+msgid "Pingback:"
+msgstr "Ping :"
+
+#: functions.php:735
+msgid "Type then hit Enter..."
+msgstr "Saisissez votre recherche..."
+
+#: functions.php:735
+msgid "Search..."
+msgstr "Rechercher..."
+
+#. translators: %s: Name of current post
+#: functions.php:441 functions.php:457
+msgid "Continue reading<span class=\"screen-reader-text\"> \"%s\"</span>"
+msgstr "Lire la suite <span class=\"screen-reader-text\">\"%s\"</span>"
+
+#: functions.php:414
+msgid "Random Article"
+msgstr "Article aléatoire"
+
+#: functions.php:340
+msgid "Add widget here to appear in your Footer Instagram Area."
+msgstr "Ajouter le widget ici qui va apparaître dans votre zone Instagram de pied."
+
+#: functions.php:338
+msgid "Instagram Widget"
+msgstr "Widget Instagram"
+
+#: functions.php:330
+msgid "Add widgets here to appear in your footer."
+msgstr "Ajoutez des widgets ici qui vont apparaitront dans le pied."
+
+#: functions.php:328
+msgid "Footer Widgets"
+msgstr "Widgets du pied"
+
+#: functions.php:320
+msgid "Add widgets here to appear in your alternative/fixed sidebar."
+msgstr "Ajoutez des widgets ici qui vont apparaître dans votre barre alternative/fixe."
+
+#: functions.php:318
+msgid "Sidebar Alt"
+msgstr "Barre Alt"
+
+#: functions.php:300 functions.php:310
+msgid "Add widgets here to appear in your sidebar."
+msgstr "Ajouter ici les widgets qui vont apparaître dans la barre de la boutique."
+
+#: functions.php:231 functions.php:239 functions.php:247 functions.php:255
+#: functions.php:263
+msgctxt "Google font: on or off"
+msgid "on"
+msgstr "on"
+
+#: functions.php:51
+msgid "Main Menu"
+msgstr "Menu principal"
+
+#: functions.php:50
+msgid "Top Menu"
+msgstr "Menu du haut"
+
+#: footer.php:75
+msgid "Back to top"
+msgstr "Haut de page"
+
+#: footer.php:46
+msgid " | "
+msgstr " | "
+
+#: comments.php:30
+msgid "Newer Comments"
+msgstr "Commentaires plus récents"
+
+#: comments.php:26
+msgid "Older Comments"
+msgstr "Commentaires plus anciens"
+
+#: comments.php:12
+msgid "One Comment"
+msgstr "Un commentaire"
+
+#: comments.php:12 templates/grid/blog-full.php:61
+#: templates/grid/blog-grid.php:26 templates/grid/blog-list.php:35
+#: templates/single/post-content.php:69
+msgid "0 Comments"
+msgstr "0 commentaire"
+
+#: 404.php:5
+msgid "Page not found!"
+msgstr "Page non trouvée !"
+
+#: inc/customizer/customizer.php:568
+msgid "Pattern"
+msgstr "Composition"
+
+#: inc/about/about-bard.php:393
+msgid "Before asking a questions it's highly recommended to search on forums, but if you can't find the solution feel free to create a new topic."
+msgstr "Avant de poser une question, il est fortement recommandé de rechercher sur les forums, mais si vous ne trouvez pas la solution n’hésitez pas à créer un nouveau sujet."
+
+#: inc/customizer/customizer.php:651
+msgid "Show Random Post Icon"
+msgstr "Afficher l’icône d’article aléatoire"
+
+#: inc/customizer/customizer.php:781
+msgid "Post Excerpt"
+msgstr "Extrait de l’article"
+
+#: inc/customizer/customizer.php:867
+msgid "Show Author Description"
+msgstr "Afficher la description de l’auteur"
+
+#: index.php:76
+msgid "Nothing Found!"
+msgstr "Rien n’a été trouvé !"
+
+#: templates/sidebars/sidebar-alt.php:25
+msgid "No Widgets found in the Sidebar Alt!"
+msgstr "Aucun widget trouvé dans la colonne Alt !"
+
+#: inc/customizer/customizer.php:648
+msgid "Show Sidebar Icon"
+msgstr "Afficher l’icône de colonne latérale"
+
+#. Author of the theme
+#, gp-priority: low
+msgid "WP Royal"
+msgstr "WP Royal"

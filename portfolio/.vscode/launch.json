@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "msedge",
+            "name": "http://entry-header",
+            "request": "launch",
+            "url": "http://entry-header"
+        }
+    ]
+}

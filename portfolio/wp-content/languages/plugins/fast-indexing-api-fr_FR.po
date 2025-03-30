@@ -1,0 +1,187 @@
+# Translation of Plugins - Instant Indexing for Google - Stable (latest release) in French (France)
+# This file is distributed under the same license as the Plugins - Instant Indexing for Google - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2020-11-14 14:39:17+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/4.0.0-alpha.4\n"
+"Language: fr\n"
+"Project-Id-Version: Plugins - Instant Indexing for Google - Stable (latest release)\n"
+
+#: includes/class-instant-indexing.php:1170 views/console.php:21
+msgid "Settings"
+msgstr "Réglages"
+
+#: includes/class-instant-indexing.php:144
+#: includes/class-instant-indexing.php:158
+#: includes/class-instant-indexing.php:165
+msgid "Console"
+msgstr "Console"
+
+#: includes/class-instant-indexing.php:669 views/dashboard.php:19
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#. Plugin Name of the plugin
+#: includes/class-instant-indexing.php:670
+#: includes/class-instant-indexing.php:675
+#: includes/class-instant-indexing.php:1001 views/dashboard.php:230
+msgid "Instant Indexing"
+msgstr "Indexation instantanée"
+
+#: includes/class-instant-indexing.php:765
+msgid "Error"
+msgstr "Erreur"
+
+#: includes/class-instant-indexing.php:766
+msgid "Last updated "
+msgstr "Dernière mise à jour "
+
+#: includes/class-instant-indexing.php:767
+msgid "See response for details."
+msgstr "Voir la réponse pour plus de détails."
+
+#: includes/class-instant-indexing.php:832
+msgid "Settings updated."
+msgstr "Réglages mis à jour."
+
+#: views/google-settings.php:18
+msgid "Read our setup guide"
+msgstr "Lire notre guide d’installation"
+
+#. translators: %s is a link to Rank Math plugin page
+#: includes/class-instant-indexing.php:1060
+msgid "It is recommended to use %s along with the Instant Indexing plugin."
+msgstr "Il est recommandé d’utiliser %s avec l’extension d’indexation instantanée."
+
+#. translators: %s is a link to Rank Math plugin page
+#: includes/class-instant-indexing.php:1060 views/dashboard.php:530
+msgid "Rank Math SEO"
+msgstr "Rank Math SEO"
+
+#: views/console.php:46
+msgid "Action:"
+msgstr "Action :"
+
+#: views/console.php:56
+msgid "Send to API"
+msgstr "Envoyer à l’API"
+
+#: views/console.php:66
+msgid "Show Raw Response"
+msgstr "Afficher la réponse brute"
+
+#: views/dashboard.php:33 views/dashboard.php:34
+msgid "Setup Wizard"
+msgstr "Assistant de configuration"
+
+#: views/dashboard.php:48
+msgid "Records the URLs on which visitors &amp; search engines run into 404 Errors. You can also turn on Redirections to redirect the error causing URLs to other URLs."
+msgstr "Enregistre les URL d’erreur 404 sur lesquelles les visiteurs et les moteurs de recherche arrivent. Vous pouvez également activer les redirections pour rediriger les erreurs 404 vers d’autres URL."
+
+#: views/dashboard.php:92
+msgid "AMP"
+msgstr "AMP"
+
+#: views/dashboard.php:138
+msgid "bbPress"
+msgstr "bbPress"
+
+#: views/dashboard.php:254
+msgid "Link Counter"
+msgstr "Compteur de liens"
+
+#: views/dashboard.php:323
+msgid "Redirections"
+msgstr "Redirections"
+
+#: views/dashboard.php:369
+msgid "Role Manager"
+msgstr "Gestionnaire de rôle"
+
+#: views/dashboard.php:392
+msgid "SEO Analysis"
+msgstr "Analyse SEO"
+
+#: views/dashboard.php:484
+msgid "WooCommerce"
+msgstr "WooCommerce"
+
+#: views/dashboard.php:511
+msgid "Activate Now"
+msgstr "Activer maintenant"
+
+#: views/dashboard.php:516
+msgid "Install for Free"
+msgstr "Installer gratuitement"
+
+#: views/dashboard.php:552
+msgid "Compatible"
+msgstr "Compatible"
+
+#: views/dashboard.php:552
+msgid "with your version of WordPress"
+msgstr "avec votre version de WordPress"
+
+#. Author of the plugin
+msgid "Rank Math"
+msgstr "Rank Math"
+
+#. Author URI of the plugin
+msgid "https://s.rankmath.com/home"
+msgstr "https://s.rankmath.com/home"
+
+#: views/dashboard.php:529
+msgid "WordPress SEO Plugin – Rank Math"
+msgstr "Extension SEO WordPress – Rank Math"
+
+#: views/console.php:70
+msgid "Response..."
+msgstr "Réponse…"
+
+#: views/dashboard.php:21 views/dashboard.php:27 views/dashboard.php:28
+msgid "Modules"
+msgstr "Modules"
+
+#: views/dashboard.php:36 views/dashboard.php:37
+msgid "Import &amp; Export"
+msgstr "Importer & exporter"
+
+#: views/dashboard.php:46
+msgid "404 Monitor"
+msgstr "Moniteur 404"
+
+#: views/dashboard.php:415
+msgid "Sitemap"
+msgstr "Plan de site"
+
+#: views/dashboard.php:547
+msgid "Rank Math is a revolutionary SEO plugin that combines the features of many SEO tools in a single package & helps you multiply your traffic."
+msgstr "Rank Math est une extension SEO qui combine les fonctionnalités de nombreux outils SEO dans un unique paquet et vous aide à multiplier votre trafic."
+
+#: views/dashboard.php:117
+msgid "Connect Rank Math with Google Search Console to see the most important information from Google directly in your WordPress dashboard."
+msgstr "Connectez Rank Math à Google Search Console pour voir les plus importantes informations Google directement dans votre tableau de bord WordPress."
+
+#: views/dashboard.php:394
+msgid "Let Rank Math analyze your website and your website's content using 70+ different tests to provide tailor-made SEO Analysis to you."
+msgstr "Laissez Rank Math analyser votre site et son contenu en utilisant plus de 70 tests différents pour vous fournir une analyse SEO sur mesure."
+
+#: views/google-settings.php:17
+msgid "Upload the Service Account JSON key file you obtained from Google API Console or paste its contents in the field."
+msgstr "Téléversez le fichier de clé JSON du compte de service que vous avez obtenu à partir de la console d’API Google ou collez son contenu dans le champ."
+
+#: views/google-settings.php:24
+msgid "<code>rank-math-835b6feb842b.json</code> file found in the plugin folder. You cannot change the JSON key from here until you delete or remame this file."
+msgstr "Fichier <code>rank-math-835b6feb842b.json</code> trouvé dans le dossier de l’extension. Vous ne pouvez pas modifier la clé JSON depuis ici jusqu’à ce que vous supprimiez ou renommiez ce fichier."
+
+#: views/google-settings.php:29
+msgid "Or upload JSON file: "
+msgstr "Ou téléverser le fichier JSON : "
+
+#: includes/class-instant-indexing.php:764
+msgid "Success"
+msgstr "Terminé"

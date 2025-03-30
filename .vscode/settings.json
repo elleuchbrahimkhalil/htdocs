@@ -1,0 +1,10 @@
+{
+    "cmake.sourceDirectory": "C:/xampp/htdocs/portfolio/wp-content/themes/bard",
+    "fiveServer.injectBody": true,
+    "fiveServer.highlight": true,
+    "php.version": "8.3",
+    "editor.defaultFormatter": "GitHub.copilot",
+    "[php]": {
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+    }
+}
