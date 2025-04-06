@@ -1,688 +1,270 @@
 <?php
-// Configuration des erreurs
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Toujours en haut du fichier
+declare(strict_types=1);
+header_remove('X-Powered-By'); // Cache le header PHP
 
-ob_start(); // Start output buffering
+// Configuration de sécurité
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 1); // En HTTPS seulement
+ini_set('session.use_strict_mode', 1);
 
-// Démarrage de la session
 session_start();
 
-
-// Inclusion des fichiers nécessaires
-require_once 'include_avatar.php';
+// Protection contre le clickjacking
+header('X-Frame-Options: DENY');
+// Protection XSS
+header('X-XSS-Protection: 1; mode=block');
+// Pas de MIME-sniffing
+header('X-Content-Type-Options: nosniff');?>
+<?php
+session_start();
 require_once 'verification.php';
 require_once 'db_connect.php';
-require_once 'exmenu.php';
 
-// Vérification de la connexion utilisateur
-if (!isLoggedIn()) {
-    header('Location: login.php');
-    exit;
-}
+// Configuration de la page
+$page_title = "Problèmes récents";
+$additional_css = "
+    .publications-grid{
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 15px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .publication-card{
+        border: 1px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 15px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        position: relative;
+        width: 100%;
+    }
+    .publication-header{display:flex;align-items:center;margin-bottom:10px}
+    .author-avatar{width:40px;height:40px;border-radius:50%;margin-right:10px;object-fit:cover;border:2px solid #f0f4f8}
+    .username{font-weight:600;color:#2c3e50;font-size:1em}
+    .date{color:#7f8c8d;font-size:0.8em}
+    .publication-title{font-weight:600;font-size:1.2em;margin:10px 0;color:#2c3e50}
+    .publication-description{color:#4a5568;line-height:1.5;margin-bottom:15px;font-size:0.9em;max-height:60px;overflow:hidden;text-overflow:ellipsis}
+    .read-more-btn{color:#4299e1;font-size:0.85em;cursor:pointer;text-decoration:underline;background:none;border:none;padding:0}
+    .publication-code{background:#f8fafc;padding:10px;border-radius:6px;font-family:monospace;overflow-x:auto;border:1px solid #e2e8f0;max-height:150px;font-size:0.85em;margin-bottom:10px}
+    .tags-container{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+    .tag{padding:3px 8px;border-radius:15px;font-size:0.75em;background:#edf2f7}
+    .difficulty-easy{background:#f0fff4;color:#38a169}
+    .difficulty-medium{background:#fffaf0;color:#dd6b20}
+    .difficulty-hard{background:#fff5f5;color:#e53e3e}
+    .publication-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid #f0f4f8}
+    .publication-stats{display:flex;gap:10px;color:#718096;font-size:0.8em}
+    .favorite-btn{position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.2em;color:#cbd5e0;cursor:pointer;transition:all .2s}
+    .favorite-btn:hover{transform:scale(1.1)}
+    .favorite-btn.active{color:#EC4899}
+    .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
 
-// Vérification de l'ID du problème
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header('Location: exacueil.php');
-    exit;
-}
+    .status-indicator.not-submitted {
+        background-color: red;
+    }
 
-// Initialisation des variables
-$problem_id = (int)$_GET['id'];
-$user_id = $_SESSION['user_id'];
-$problem = null;
-$existing_solution = null;
-$errors = [];
-$success = '';
+    .status-indicator.submitted {
+        background-color: green;
+    }
+    .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+    }
+    .unsolved {
+        background-color: red;
+    }
+    .solved {
+        background-color: green;
+    }
+    .action-buttons { display: flex; gap: 10px; }
+    .btn { padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em; }
+    .btn-primary { background: #4299e1; color: white; }
+    .btn-success { background: #48bb78; color: white; }
+    .btn:hover { opacity: 0.9; }
+";
 
-// Génération du token CSRF
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+$conn = connect();
+if ($conn === null) die("Database connection failed.");
+if (!isLoggedIn()) header('Location: login.php');
 
-// Connexion à la base de données et récupération des données
+// Préparer les messages pour header.php
+$_SESSION['success_message'] = $_SESSION['success_message'] ?? '';
+$_SESSION['error_message'] = $_SESSION['error_message'] ?? '';
+
+// Récupérer les publications
 try {
-    $pdo = connect();
-    // Test simple
-    $stmt = $pdo->query("SELECT TOP 1 * FROM problems");
-
-    $test = $stmt->fetch(PDO::FETCH_ASSOC);
-    // var_dump($test); // Afficher le résultat
-    // exit; // Arrêter l'exécution pour voir le résultat
-
-    
-    // Suite du code...
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Récupération du problème
-    $stmt = $pdo->prepare("
-        SELECT p.*, u.username, u.name as author_name
-        FROM problems p
-        JOIN users u ON p.user_id = u.id
-        WHERE p.problem_id = ?
+    $stmt = $conn->prepare("
+        SELECT p.*, u.username, u.avatar_url,
+               (SELECT COUNT(*) FROM favorites WHERE problem_id = p.problem_id AND user_id = ?) AS is_favorite,
+               (SELECT COUNT(*) FROM solutions WHERE problem_id = p.problem_id AND user_id = ?) AS has_solution
+        FROM problems p 
+        JOIN users u ON p.user_id = u.id 
+        ORDER BY p.created_at DESC
     ");
-    $stmt->execute([$problem_id]);
-    $problem = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$problem) {
-        header('Location: exacueil.php');
-        exit;
-    }
-// Dans submit_solution.php et autres fichiers
-$stmt = $pdo->prepare("
-    INSERT INTO solutions (problem_id, user_id, solution_code, explanation, status, created_at)
-    VALUES (?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
-");
-    // Récupération des solutions existantes
-    $stmt = $pdo->prepare("
-        SELECT TOP 1 *
-        FROM solutions
-        WHERE problem_id = ? AND user_id = ?
-        ORDER BY created_at DESC
-    ");
-    $stmt->execute([$problem_id, $user_id]);
-    $existing_solution = $stmt->fetch(PDO::FETCH_ASSOC);
-
-} catch (PDOException $e) {
-    error_log("Erreur PDO: " . $e->getMessage());
-    $errors[] = "Une erreur de base de données est survenue: " . $e->getMessage();
+    $stmt->execute([$_SESSION['user_id'], $_SESSION['user_id']]);
+    $publications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    error_log("Erreur: " . $e->getMessage());
-    $errors[] = $e->getMessage();
+    error_log("Database error: ".$e->getMessage());
+    $publications = [];
 }
 
-// Récupération des erreurs de formulaire
-if (isset($_SESSION['form_errors'])) {
-    $errors = array_merge($errors, $_SESSION['form_errors']);
-    unset($_SESSION['form_errors']);
-}
-
-// Récupération du message de succès
-if (isset($_SESSION['success'])) {
-    $success = $_SESSION['success'];
-    unset($_SESSION['success']);
-}
-function safe_echo($var) {
-    if (is_array($var)) {
-        echo htmlspecialchars(implode(', ', $var));
-    } else {
-        echo htmlspecialchars((string)$var);
-    }
-}
+// Inclure l'en-tête qui contient la structure de base et la sidebar
+include 'header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soumettre une solution - <?php safe_echo($problem['title'] ?? 'Problème'); ?></title>
+<h2>Problèmes récents</h2>
 
-
-    
-    <!-- CodeMirror pour l'éditeur de code -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background-color: #f9f9f9;
-        }
-
-        .main-container {
-            display: flex;
-            flex: 1;
-        }
-
-        .sidebar {
-            width: 250px;
-            padding: 20px;
-            background-color: #f4f4f4;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-        }
-
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .sidebar h2, .content h2 {
-            font-size: 1.5em;
-            margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #eaeaea;
-            padding-bottom: 10px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0 0 20px 0;
-        }
-
-        .sidebar ul li {
-            margin: 10px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #333;
-            display: block;
-            padding: 8px;
-            border-radius: 4px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sidebar ul li a:hover {
-            background-color: #e0e0e0;
-            transform: translateX(5px);
-        }
-
-        .form-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        }
-
-        .form-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .form-header h2 {
-            margin: 0;
-            color: #2c3e50;
-            font-size: 1.8rem;
-            border-bottom: none;
-        }
-
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background-color: #f8f9fa;
-            color: #2c3e50;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .back-button:hover {
-            background-color: #e9ecef;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        textarea, input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-
-        textarea:focus, input[type="text"]:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-
-        textarea {
-            min-height: 300px;
-            resize: vertical;
-            font-family: 'Consolas', 'Monaco', monospace;
-        }
-
-        button {
-            padding: 10px 18px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .error-message {
-            color: #e74c3c;
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #fadbd8;
-            border-radius: 6px;
-            border-left: 4px solid #e74c3c;
-        }
-
-        .success-message {
-            color: #27ae60;
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #d5f5e3;
-            border-radius: 6px;
-            border-left: 4px solid #27ae60;
-        }
-
-        .problem-details {
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-left: 4px solid #4CAF50;
-            border-radius: 6px;
-        }
-
-        .problem-details h3 {
-            margin-top: 0;
-            color: #2c3e50;
-            font-size: 1.4em;
-        }
-
-        .problem-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .problem-meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            background-color: #f8f9fa;
-            border-radius: 20px;
-            font-size: 0.9em;
-        }
-
-        .existing-solution {
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: #f0f7fb;
-            border-left: 4px solid #3498db;
-            border-radius: 6px;
-        }
-
-        .status-pending {
-            color: #f39c12;
-        }
-
-        .status-approved {
-            color: #27ae60;
-        }
-
-        .status-rejected {
-            color: #e74c3c;
-        }
-
-        .CodeMirror {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            height: auto;
-            min-height: 300px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 30px;
-        }
-
-        .form-actions button {
-            min-width: 200px;
-        }
-
-        .form-actions .cancel-btn {
-            background-color: transparent;
-            color: #7f8c8d;
-            border: 1px solid #ddd;
-        }
-
-        .form-actions .cancel-btn:hover {
-            background-color: #f8f9fa;
-            color: #2c3e50;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-
-        .difficulty-easy {
-            color: #28a745;
-        }
-
-        .difficulty-medium {
-            color: #ffc107;
-        }
-
-        .difficulty-hard {
-            color: #dc3545;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .form-actions button {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="main-container">
-        <div class="sidebar">
-            <h2>Formation Générale</h2>
-            <ul>
-                <li><a href="https://www.hackerrank.com/" target="_blank"><i class="fas fa-laptop-code"></i> HackerRank</a></li>
-                <li><a href="https://www.codewars.com/" target="_blank"><i class="fas fa-code"></i> Codewars</a></li>
-                <li><a href="https://www.leetcode.com/" target="_blank"><i class="fas fa-file-code"></i> LeetCode</a></li>
-                <li><a href="https://www.topcoder.com/" target="_blank"><i class="fas fa-trophy"></i> TopCoder</a></li>
-            </ul>
-            
-            <h2>Compétitions Mondiales</h2>
-            <ul>
-                <li><a href="https://icpc.global/" target="_blank"><i class="fas fa-globe"></i> ICPC</a></li>
-                <li><a href="https://www.kaggle.com/" target="_blank"><i class="fas fa-chart-line"></i> Kaggle</a></li>
-            </ul>
-            
-            <h2>Compétitions Régionales</h2>
-            <ul>
-                <li><a href="https://www.codechef.com/" target="_blank"><i class="fas fa-utensils"></i> CodeChef</a></li>
-                <li><a href="https://www.codingame.com/" target="_blank"><i class="fas fa-gamepad"></i> CodinGame</a></li>
-            </ul>
-            
-            <h2>Mes Actions</h2>
-            <ul>
-                <li><a href="expublier.php"><i class="fas fa-plus-circle"></i> Publier un problème</a></li>
-                <li><a href="favorites.php"><i class="fas fa-star"></i> Mes problèmes favoris</a></li>
-            </ul>
-            
-            <h2>Contact</h2>
-            <ul>
-                <li><a href="mailto:contact@example.com"><i class="fas fa-envelope"></i> contact@example.com</a></li>
-            </ul>
+<div class="publications-grid">
+    <?php foreach($publications as $pub): ?>
+    <div class="publication-card">
+        <button class="favorite-btn <?= $pub['is_favorite']?'active':'' ?>" 
+                data-problem-id="<?= htmlspecialchars($pub['problem_id']) ?>">
+            <i class="fas fa-heart"></i>
+        </button>
+        
+        <div class="publication-header">
+            <img src="<?= htmlspecialchars($pub['avatar_url']??'default.png') ?>" 
+                 class="author-avatar" alt="Avatar">
+            <div>
+                <div class="username"><?= htmlspecialchars($pub['username']) ?></div>
+                <div class="date"><?= date('d/m/Y H:i', strtotime($pub['created_at'])) ?></div>
+            </div>
         </div>
         
-        <div class="content">
-            <?php if (!empty($success)): ?>
-                <div class="alert alert-success">
-                    
-                    <i class="fas fa-check-circle"></i> <?= htmlspecialchars($success) ?>
-                </div>
+        <div>
+            <div class="status-dot <?= $pub['has_solution'] ? 'solved' : 'unsolved'; ?>"></div>
+            <h3 class="publication-title"><?= htmlspecialchars($pub['title']) ?></h3>
+        </div>
+        
+        <div class="publication-description">
+            <?= nl2br(htmlspecialchars($pub['description'])) ?>
+        </div>
+        <button class="read-more-btn" onclick="toggleDescription(this)">Lire plus</button>
+        
+        <?php if(!empty($pub['code'])): ?>
+            <div class="publication-code">
+                <pre><?= htmlspecialchars($pub['code']) ?></pre>
+            </div>
+        <?php endif; ?>
+        
+        <div class="tags-container">
+            <span class="difficulty-<?= htmlspecialchars($pub['difficulty']) ?> tag">
+                <?= ucfirst(htmlspecialchars($pub['difficulty'])) ?>
+            </span>
+            <?php if(!empty($pub['tags'])): ?>
+                <?php foreach(explode(',', $pub['tags']) as $tag): ?>
+                    <span class="tag"><?= htmlspecialchars(trim($tag)) ?></span>
+                <?php endforeach; ?>
             <?php endif; ?>
-            
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i> 
-                    <ul>
-                        <?php foreach ($errors as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-            
-            <div class="form-container">
-                <div class="form-header">
-                    <h2><i class="fas fa-paper-plane"></i> Soumettre une solution</h2>
-                    <a href="problem.php?id=<?= htmlspecialchars($problem_id) ?>" class="back-button">
-                        <i class="fas fa-arrow-left"></i> Retour au problème
-                    </a>
-                </div>
-                
-                <?php if (!empty($problem)): ?>
-                    <div class="problem-details">
-                        <h3><?= htmlspecialchars($problem['title']) ?></h3>
-                        <p><?= nl2br(htmlspecialchars($problem['description'])) ?></p>
-                        <div class="problem-meta">
-                            <span>
-                                <i class="fas fa-user"></i> 
-                                <?= htmlspecialchars($problem['author_name'] ?? $problem['username']) ?>
-                            </span>
-                            <span>
-                                <i class="fas fa-code"></i> 
-                                <?= htmlspecialchars(ucfirst($problem['language'] ?? 'inconnu')) ?>
-                            </span>
-                            <span class="difficulty-<?= htmlspecialchars($problem['difficulty']) ?>">
-                                <i class="fas fa-signal"></i> 
-                                <?php 
-                                $difficulty_labels = [
-                                    'easy' => 'Facile',
-                                    'medium' => 'Moyen',
-                                    'hard' => 'Difficile'
-                                ];
-                                echo $difficulty_labels[$problem['difficulty']] ?? $problem['difficulty'];
-                                ?>
-                            </span>
-                            <span>
-                                <i class="fas fa-award"></i> 
-                                <?= htmlspecialchars($problem['points'] ?? '0') ?> points
-                            </span>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if ($existing_solution): ?>
-                    <div class="existing-solution">
-                        <h3><i class="fas fa-history"></i> Votre dernière soumission</h3>
-                        <p><strong>Statut :</strong> 
-                            <span class="status-<?= htmlspecialchars($existing_solution['status']) ?>">
-                                <?php 
-                                $status_labels = [
-                                    'pending' => 'En attente',
-                                    'approved' => 'Approuvée',
-                                    'rejected' => 'Rejetée'
-                                ];
-                                echo $status_labels[$existing_solution['status']] ?? $existing_solution['status'];
-                                ?>
-                            </span>
-                        </p>
-                        <?php if (!empty($existing_solution['feedback'])): ?>
-                            <p><strong>Feedback :</strong> <?= nl2br(htmlspecialchars($existing_solution['feedback'])) ?></p>
-                        <?php endif; ?>
-                        <p><small>Soumis le <?= date('d/m/Y à H:i', strtotime($existing_solution['created_at'])) ?></small></p>
-                    </div>
-                <?php endif; ?>
-                
-                <form method="POST" action="process_solution.php" onsubmit="return validateForm()">
-                    <input type="hidden" name="problem_id" value="<?= htmlspecialchars($problem_id) ?>">
-                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
-    
-                    <div class="form-group">
-                        <label for="solution_code">
-                            <i class="fas fa-code"></i> Votre solution 
-                            <?php if (!empty($problem['language'])): ?>
-                                (<?= htmlspecialchars(ucfirst($problem['language'])) ?>)
-                            <?php endif; ?>
-                        </label>
-                        <textarea id="solution_code" name="solution_code" placeholder="Entrez votre code ici..."><?= 
-                            isset($_SESSION['old_solution_code']) ? 
-                            htmlspecialchars($_SESSION['old_solution_code']) : 
-                            ($existing_solution['solution_code'] ?? '') 
-                        ?></textarea>
-                    </div>
-    
-                    <div class="form-group">
-                        <label for="explanation">
-                            <i class="fas fa-comment-alt"></i> Explication de votre approche (optionnelle)
-                        </label>
-                        <textarea id="explanation" name="explanation" placeholder="Expliquez votre raisonnement, algorithmes utilisés..."><?= 
-                            isset($_SESSION['old_explanation']) ? 
-                            htmlspecialchars($_SESSION['old_explanation']) : 
-                            ($existing_solution['explanation'] ?? '') 
-                        ?></textarea>
-                    </div>
-    
-                    <div class="form-actions">
-                        <a href="problem.php?id=<?= htmlspecialchars($problem_id) ?>" class="cancel-btn">
-                            <i class="fas fa-times"></i> Annuler
-                        </a>
-                        <button type="submit">
-                            <i class="fas fa-paper-plane"></i> Soumettre la solution
-                        </button>
-                    </div>
-                </form>
+        </div>
+        
+        <div class="publication-footer">
+            <div class="publication-stats">
+                <span><i class="fas fa-comment"></i> <?= htmlspecialchars($pub['comment_count']??0) ?></span>
+                <span><i class="fas fa-check"></i> <?= htmlspecialchars($pub['solution_count']??0) ?></span>
             </div>
             
-            <?php 
-            // Afficher l'avatar utilisateur si la fonction existe
-            if (function_exists('displayUserAvatar')) {
-                displayUserAvatar();
-            }
-            ?>
+            <div class="action-buttons">
+                <a href="problem.php?id=<?= htmlspecialchars($pub['problem_id']) ?>" 
+                   class="btn btn-primary">
+                    <i class="fas fa-eye"></i> Voir
+                </a>
+                <a href="submit_solution.php?problem_id=<?= htmlspecialchars($pub['problem_id']) ?>" 
+                   class="btn btn-success">
+                    <i class="fas fa-paper-plane"></i> Soumettre
+                </a>
+            </div>
         </div>
     </div>
+    <?php endforeach; ?>
+</div>
 
-    <!-- Scripts CodeMirror -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+<?php
+// Ajout du script spécifique pour cette page
+$additional_scripts = "
+    window.toggleDescription = function(button) {
+        const description = button.previousElementSibling;
+        if (description.style.maxHeight) {
+            description.style.maxHeight = '';
+            button.textContent = 'Lire plus';
+        } else {
+            description.style.maxHeight = 'none';
+            button.textContent = 'Lire moins';
+        }
+    };
     
-    <script>
-        // Déterminer le mode en fonction du langage du problème
-        function getCodeMirrorMode(language) {
-            const modeMap = {
-                'python': 'text/x-python',
-                'java': 'text/x-java',
-                'javascript': 'text/javascript',
-                'c': 'text/x-csrc',
-                'cpp': 'text/x-c++src',
-                'csharp': 'text/x-csharp',
-                'php': 'application/x-httpd-php',
-                'ruby': 'text/x-ruby',
-                'swift': 'text/x-swift',
-                'go': 'text/x-go',
-                'rust': 'text/x-rustsrc',
-                'kotlin': 'text/x-kotlin',
-                'typescript': 'text/typescript',
-                'sql': 'text/x-sql',
-                'html': 'text/html'
-            };
+    // Gestion des favoris
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const problemId = this.dataset.problemId;
+            const isActive = this.classList.contains('active');
             
-            return modeMap[language] || 'text/x-csrc';
-        }
-        
-        // Initialisation de l'éditeur de code
-        var editor = CodeMirror.fromTextArea(document.getElementById('solution_code'), {
-            lineNumbers: true,
-            mode: getCodeMirrorMode('<?= htmlspecialchars($problem['language'] ?? 'c') ?>'),
-            theme: 'dracula',
-            indentUnit: 4,
-            matchBrackets: true,
-            lineWrapping: true,
-            extraKeys: {"Ctrl-Space": "autocomplete"}
+            this.classList.toggle('active');
+            this.querySelector('i').style.transform = 'scale(1.2)';
+            
+            fetch('api/toggle_favorite.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    problem_id: problemId,
+                    set_favorite: isActive ? '0' : '1',
+                    csrf_token: '" . ($_SESSION['csrf_token'] ?? '') . "'
+                })
+            }).then(response => {
+                if (!response.ok) {
+                    this.classList.toggle('active');
+                }
+            }).catch(() => {
+                this.classList.toggle('active');
+            });
+            
+            setTimeout(() => {
+                this.querySelector('i').style.transform = '';
+            }, 300);
         });
-        
-        // Initialisation de l'éditeur d'explication
-        var explanationEditor = CodeMirror.fromTextArea(document.getElementById('explanation'), {
-            lineNumbers: false,
-            mode: 'text/plain',
-            theme: 'default',
-            lineWrapping: true
-        });
+    });
+    
+    // Animation des cartes
+    document.querySelectorAll('.publication-card').forEach(card => {
+        card.addEventListener('mouseenter', () => 
+            card.style.boxShadow = '0 3px 10px rgba(0,0,0,0.1)');
+        card.addEventListener('mouseleave', () => 
+            card.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)');
+    });
+";
 
-        // Validation du formulaire
-        function validateForm() {
-            const code = editor.getValue();
-            if (code.trim() === '') {
-                alert('Veuillez entrer votre solution avant de soumettre');
-                return false;
-            }
-            return true;
-        }
-        
-        // Animation pour les boutons
-        document.querySelectorAll('button, .back-button, .cancel-btn').forEach(button => {
-            button.addEventListener('mouseenter', () => {
-                button.style.transform = 'translateY(-2px)';
-                button.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            });
-            
-            button.addEventListener('mouseleave', () => {
-                button.style.transform = '';
-                button.style.boxShadow = '';
-            });
+// Inclure le pied de page
+include 'footer.php';
+?>
+
+<?php if (isset($_SESSION['solution_submitted']) && $_SESSION['solution_submitted']): ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sélectionner l'indicateur correspondant au problème
+        var indicators = document.querySelectorAll('.status-indicator[data-problem-id="<?php echo $_SESSION['submitted_problem_id']; ?>"]');
+        indicators.forEach(function(indicator) {
+            indicator.classList.remove('not-submitted');
+            indicator.classList.add('submitted');
         });
-    </script>
-</body>
-</html>
+    });
+</script>
+<?php 
+    // Nettoyer les variables de session
+    unset($_SESSION['solution_submitted']);
+    unset($_SESSION['submitted_problem_id']);
+endif; 
+?>

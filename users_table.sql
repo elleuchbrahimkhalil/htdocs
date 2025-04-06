@@ -1,1 +1,2 @@
-EXEC sp_columns 'problems';
+use rcodephp;
+select * from problems
