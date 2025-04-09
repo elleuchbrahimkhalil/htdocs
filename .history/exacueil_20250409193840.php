@@ -1,7 +1,4 @@
 <?php
-header("Access-Control-Allow-Origin: https://elleuchbrahimkhalil.github.io");
-header("X-Frame-Options: ALLOW-FROM https://elleuchbrahimkhalil.github.io");
-
 session_start();
 require_once 'verification.php';
 require_once 'db_connect.php';
