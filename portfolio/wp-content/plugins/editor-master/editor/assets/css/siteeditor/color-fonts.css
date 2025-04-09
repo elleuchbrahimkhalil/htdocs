@@ -1,0 +1,310 @@
+
+.data-font-heading{
+   font-size: 22px
+}
+.data-font-paragraph{
+   font-size: 14px;
+}
+.dropdown_color_palette li a {
+      padding: 1px !important;
+}
+.dropdown-Font-Sets {
+      height: 400px;
+}
+.dropdown-Font-Sets p {
+  margin: 0 6px;
+}
+.dropdown-Font-Sets li a {
+    padding: 10px;
+}
+.dropdown-Font-Sets .divider {
+    box-shadow: 0 0 8px #aaa;
+    margin: 0;
+    width: 98% !important;
+}
+.dropdown-Font-Sets li a:hover {
+    background: #fff ;
+}
+.dropdown_customize_palette li a span ul {
+      list-style-type: none;
+}
+.dropdown_customize_palette {
+      min-width: 250px;
+}
+.dropdown_customize_palette > li {
+      float: left;
+
+}
+.dropdown_customize_palette li a span ul{
+      background: url(../../images/down_arrow.png) no-repeat scroll 50% 5px rgba(0, 0, 0, 0);
+      padding-top: 24px;
+}
+
+.Customize_ft2{
+      line-height: 1em;
+      margin: 18px 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 150px !important;
+}
+
+.Customize_ft1 {
+      display: block;
+      height: 25px;
+      left: 10px;
+      text-align: left;
+      top: 50%;
+      width: 25px;
+      margin: 8px 5px 30px 8px;
+}
+.Customize_ft3 {
+      font-family: "Helvetica Neue Thin","HelveticaNeueW01-Thin","HelveticaNeueW02-Thin","HelveticaNeueW10-35Thin",Helvetica,Arial,sans-serif;
+      font-size: 14px;
+}
+.dropdown_Customize_font {
+      min-width: 240px;
+}
+
+.font_cl1 {
+
+      background-color: #333333;
+      display: inline-block;
+      height: 17px;
+      width: 17px;
+}
+.font_cl2{
+      font-family: open sans,sans-serif;
+      font-size: 40px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      min-width: 0;
+}
+.font_cl3 {
+      color: #AAAAAA;
+      font-size: 11px;
+      position: relative;
+      right: 3px;
+      top: -55px;
+}
+.font_cl4 {
+      background-color: #333333;
+      display: block;
+      height: 17px;
+      width: 17px;
+}
+.font_cl5{
+       font-family: open sans,sans-serif;
+      font-size: 11px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: bold;
+      min-width: 0;
+}
+.font_cl6 {
+      color: #33ccff;
+      font-size: 11px;
+      position: relative;
+      right: 3px;
+      top: -55px;
+}
+.font_cl7 {
+      background-color: #333333;
+      display: block;
+      height: 17px;
+      width: 17px;
+}
+.font_cl8{
+      font-family: open sans,sans-serif;
+      font-size: 15px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: bold;
+      min-width: 0;
+}
+.font_cl9 {
+      color: #AAAAAA;
+      font-size: 11px;
+      position: relative;
+      right: 3px;
+      top: -55px;
+}
+.font_cl10 {
+      background-color: #333333;
+      display: block;
+      height: 17px;
+      width: 17px;
+}
+.font_cl11{
+       font-family: open sans,sans-serif;
+      font-size: 52px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      min-width: 0;
+}
+.font_cl12 {
+      color: #AAAAAA;
+      font-size: 11px;
+      position: relative;
+      right: 3px;
+      top: -55px;
+}
+.font_cl13 {
+      background-color: #333333;
+      display: block;
+      height: 17px;
+      width: 17px;
+}
+.font_cl14{
+      font-family: open sans,sans-serif;
+      font-size: 30px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      min-width: 0;
+}
+.font_cl15 {
+      color: #AAAAAA;
+      font-size: 11px;
+      position: relative;
+      right: 3px;
+      top: -55px;
+}
+
+.font_cl16 {
+      background-color: #333333;
+      display: block;
+      height: 17px;
+      width: 17px;
+}
+.font_cl17{
+       font-family: signika,sans-serif;
+      font-size: 22px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      min-width: 0;
+}
+.font_cl18 {
+      color: #AAAAAA;
+      font-size: 11px;
+      position: relative;
+      right: 3px;
+      top: -55px;
+}
+
+
+/* Sed Color Palettes */
+
+.sed-color-palettes{
+      width: 100%;
+      height: auto;
+      min-height: 20px;
+      padding: 0px;
+}
+.sed-color-palettes > ul:after, .sed-color-palettes > ul:before {
+      display: table;
+      content: "";
+}
+.sed-color-palettes > ul:after {
+      clear: both;
+}
+.sed-color-palettes > ul > li{
+      margin-right: 8px;
+      border-radius: 0px;
+      overflow: hidden;
+      float: left;
+      display: block !important;
+}
+.sed-color-palettes > ul > li:nth-of-type(2n) {
+    margin-right: 0;
+}
+
+.sed-palette-text {
+      display: block;
+      margin-bottom: 0px;
+}
+.sed_color_palette{
+    border: 1px solid #ddd;
+    padding: 3px 4px;
+    background-color: #f5f5f5;
+    border-radius: 0;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+.selected-palette .sed_color_palette {
+    background-color: rgba(0, 0, 0, .02);
+    border-color: #00aaff;
+}
+
+.sed_color_palette > ul:after, .color_palette > ul:before {
+      display: table;
+      content: "";
+}
+.sed_color_palette > ul:after {
+      clear: both;
+}
+/*
+.sed_color_palette > ul{
+  box-shadow: inset 1px 0 0 5px rgba(0, 0, 0, 0.05);
+}
+*/
+.sed_color_palette > ul#sed_custom_palette{
+      border: 1px solid #ddd;
+}
+.sed-color-palettes .sed_color_palette li {
+      height: 50px;
+      float: left;
+      width: 20px;
+      margin: 0;
+      display: block !important;
+}
+
+
+
+/* Custom Fonts */  
+.sed-custom-fonts-accordion input.media-url-field {
+    width: 100%;
+}
+
+.sed-custom-fonts-accordion .sed-custom-font-accordion-delete {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: #ff0000;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.sed-custom-fonts-accordion .sed-custom-font-accordion-delete:hover {
+    opacity: 1;
+}
+
+.sed-custom-fonts-accordion .sed-accordion-header {
+    padding-right: 30px;
+}
+
+.sed-custom-fonts-accordion > .sed-accordion-header , 
+.sed-custom-fonts-accordion > .sed-accordion-content {
+    margin: 0 !important;
+    width: 100%; 
+    position: relative; 
+}
+
+.sed-custom-fonts-accordion > .sed-accordion-header {
+    margin: 10px 0 0 0 !important;
+}
+
+.sed-custom-fonts-accordion > .sed-accordion-header:first-child {
+    margin: 0 !important; 
+}
+
+.sed-custom-fonts-accordion > .sed-accordion-header .ui-accordion-header-icon {
+    font-size: 11px;
+    line-height: 18px;
+    height: 18px;
+    vertical-align: middle;
+}

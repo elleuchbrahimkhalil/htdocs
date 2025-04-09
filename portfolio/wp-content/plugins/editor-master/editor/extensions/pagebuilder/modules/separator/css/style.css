@@ -1,0 +1,67 @@
+.module-separator {
+    border: 0 none;
+    display: block;
+    outline: medium none;
+    position: relative;
+}
+
+.module-separator.separator-skin-default {
+    font-size: 0;
+}
+
+.module-separator .separator  {
+    border-width: 0; 
+    border-color: #eee;
+}
+
+.module-separator .spr-dotted {
+    border-style: dotted;
+}
+
+.module-separator .spr-dashed {
+    border-style: dashed;
+}
+
+.module-separator .spr-solid {
+    border-style: solid;
+}
+
+.module-separator .spr-double {
+    border-style: solid
+}
+
+.module-separator .spr-horizontal {
+    width: 100%;
+    height: 0px;
+    display: block;
+}
+
+.module-separator.separator-skin-default .spr-horizontal {
+    display: inline-block;
+    margin: 0;
+    vertical-align: top;
+}
+
+.module-separator .spr-horizontal.spr-double {
+    height: 4px;  
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+.module-separator .spr-vertical {
+    border-width: 0 0 0 1px; 
+    height: 100%;
+    width: 0;
+    display: inline-block;
+    margin: 0;
+    vertical-align: top;
+}
+
+.module-separator .spr-vertical.spr-double {
+    width: 4px; 
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+

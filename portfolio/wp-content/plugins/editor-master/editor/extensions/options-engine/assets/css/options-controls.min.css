@@ -1,0 +1,444 @@
+
+/**toggle
+****************/
+.sed-bp-form-toggle {
+    float: right;
+    display: block;    
+    height: 28px;
+    width: 40px; 
+} 
+.sed-bp-form-toggle input[type="checkbox"] {
+    display: none;
+}
+.sed-bp-form-toggle .switch {
+    border: 1px solid #ddd;
+    display: inline-block;
+    width: 35px;
+    height: 12px;
+    border-radius: 8px;
+    background: #ddd;
+    vertical-align: middle;
+    position: relative;
+    top: 0;
+    cursor: pointer;
+    user-select: none;
+    transition: background 350ms ease;
+}
+.sed-bp-form-toggle .switch:after,
+.sed-bp-form-toggle .switch:before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: -3px;
+    transition: all 350ms cubic-bezier(0,.95,.38,.98), background 150ms ease;
+}
+.sed-bp-form-toggle .switch:before {
+    background: rgba(221,221,221,0.3);
+    transform: translate3d(0, -50%, 0) scale(0);
+}
+.sed-bp-form-toggle .switch:after {
+    background: #fff;
+    border: 1px solid #ddd;
+    transform: translate3d(0, -50%, 0);
+}
+.sed-bp-form-toggle .switch:active:before {
+    transform: translate3d(0, -50%, 0) scale(3);
+}
+.sed-bp-form-toggle input:checked + .switch {
+    background: #00aaff;
+    border-color: #00aaff;
+}  
+.sed-bp-form-toggle input:checked + .switch:before {
+    background: rgba(0,170,255,0.3);
+    transform: translate3d(100%, -50%, 0) scale(1);
+}
+.sed-bp-form-toggle input:checked + .switch:after {
+    background: #fff;
+    border-color: #00aaff;
+    transform: translate3d(100%, -50%, 0);
+}
+.sed-bp-form-toggle input:checked + .switch:active:before {
+    background: rgba(0,170,255,0.3);
+    transform: translate3d(100%, -50%, 0) scale(3);
+}
+
+/**Switch
+****************/
+
+.sed-bp-form-switch input[type="checkbox"] {
+  display: none;
+}
+.sed-bp-form-switch {
+  float: right;
+  border: none;
+  margin-bottom: 0;
+  outline: 0;
+  padding: 0;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+} 
+.sed-bp-form-switch .switch-label {
+  background: #ddd;
+  color: transparent;
+  cursor: pointer;
+  display: block;
+  margin-bottom: 0;
+  position: relative;
+  transition: left 0.15s ease-out;
+  height: 20px;
+  border: 1px solid #ddd;
+  font-size: 0;     
+  width: auto;
+  display: inline-block;
+  border-radius: 1000px;
+}
+.sed-bp-form-switch .switch-label:after {
+  background: #FFFFFF;
+  border: 1px solid #ddd;
+  content: "";
+  display: block;
+  height: 18px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 50%;
+  border-radius: 1000px;
+  -webkit-transition: all 0.25s ease-in-out;
+  -moz-transition: all 0.25s ease-in-out;
+  -ms-transition: all 0.25s ease-in-out;
+  -o-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+}
+  
+.sed-bp-form-switch input {
+  left: 10px;
+  opacity: 0;
+  padding: 0;
+  position: absolute;
+  top: 9px;
+}  
+.sed-bp-form-switch input + label {
+  margin-left: 0;
+  margin-right: 0;
+}
+.sed-bp-form-switch input:checked + label {
+  background: #00aaff;
+  border-color: #00aaff;
+}  
+.sed-bp-form-switch input:checked + label:after {
+  left: 50%;
+  border-color: #00aaff;
+  background: #ffffff;
+}
+
+.sed-bp-form-switch .switch-off,
+.sed-bp-form-switch .switch-on {
+    line-height: 20px;
+    font-weight: bold;
+    padding: 0 7px;
+    font-size: 10px;  
+}
+.sed-bp-form-switch .switch-on {
+  color: #fff;
+  padding-right: 5px;
+}
+.sed-bp-form-switch .switch-off {
+  color: #777;
+  padding-left: 5px;
+}
+  
+
+/**Radio Image
+****************/
+
+.sed-bp-form-radio-image label {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.sed-bp-form-radio-image input {
+  display: none;
+}  
+.sed-bp-form-radio-image input img {
+  border: 1px solid transparent;
+}
+.sed-bp-form-radio-image input:checked + label img {
+    -webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,.25);
+    box-shadow: 0 0 5px 2px rgba(0,0,0,.25);
+    border: 1px solid #00aaff;
+} 
+
+
+ 
+/**Radio Buttonset
+*******************/
+.sed-bp-form-radio-buttonset .buttonset-label{
+  font-size: 0;
+}
+.sed-bp-form-radio-buttonset .buttonset-label > div { 
+    display: inline-block;
+    width: auto;
+}
+
+.sed-bp-form-radio-buttonset .buttonset-input {
+    display: none;
+}
+.sed-bp-form-radio-buttonset .buttonset-input:checked  + .buttonset-label > div {
+    background-color: #00aaff;
+    border-color: #00aaff; 
+    color: #fff;
+}
+
+
+ 
+/**Slider
+*******************/
+.sed-bp-form-slider .sed-bp-form-slider-container{
+    clear: both;
+    background-color: #ddd;
+    box-shadow: 0 0 2px 0 #ddd inset;
+    border-radius: 1000px;
+    height: 2px;
+    position: relative;
+    margin-bottom: 10px;    
+    float: left;
+    min-width: 80%;
+    margin-top: 8px;
+}    
+.sed-bp-form-slider .sed-bp-form-slider-container .ui-slider-range{
+    background: #00aaff;
+    height: 100%;
+    top: 0;
+    border: 0 none;
+    border-radius:  1000px;
+    display: block;
+    position: absolute;
+    z-index: 1;
+}
+.sed-bp-form-slider .sed-bp-form-slider-container .ui-slider-handle{
+    background: #fff;
+    border: 1px solid #00aaff;
+    border-radius: 1000px;
+    cursor: pointer;
+    height: 12px;
+    margin-top: -6px;
+    margin-left: -6px;
+    outline: 0 none;
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    z-index: 2;
+}
+.sed-bp-form-slider .sed-bp-form-slider-container .ui-slider-handle:last-child {
+  left: 0;
+}
+.sed-bp-form-slider .slider-value { 
+    float: right;
+}
+.sed-bp-form-slider .slider-value input.slider-demo-value {
+    width: 30px;
+    padding: 0;
+    min-width: 30px;
+    display: inline-block;
+    background: transparent !important;
+    border: none;
+}
+
+
+ 
+/**Sortable
+*******************/
+.sed-bp-form-sortable .sed-bp-form-sortable-item {
+    background-color: #fff;
+    border: 1px solid #d5d5d5;
+    border-radius: 0px;
+    box-shadow: none;
+    color: #666;
+    font-size: 12px;
+    margin: 0 0 5px;
+    padding: 5px 10px;
+    width: 100%;
+}
+
+.sed-bp-form-sortable .sed-bp-form-sortable-item > label {
+    line-height: 20px;
+    max-width: 50%;
+    width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+}
+.sed-bp-form-sortable .sed-bp-form-sortable-item:after,
+.sed-bp-form-sortable .sed-bp-form-sortable-item:before {
+    display: table;
+    content: "";
+}
+.sed-bp-form-sortable .sed-bp-form-sortable-item:after {
+    clear: both;
+}
+.sed-bp-form-sortable .sed-bp-form-sortable-actions {
+    float: right;
+}
+.sed-bp-form-sortable .sed-bp-form-sortable-actions > .sortable-action {
+    display: inline-block;
+    margin: 0 2px; 
+}
+
+.sed-bp-form-sortable .sed-bp-form-sortable-actions > .sortable-action .fa {
+    color: #888;
+    font-size: 1.15em;
+    cursor: pointer;
+}
+.sed-bp-form-sortable .sed-bp-form-sortable-actions > .sortable-action:hover .fa {
+    color: #00A9E8;
+}
+.sed-bp-form-sortable .sed-bp-form-sortable-actions > .sortable-action.sort .fa {
+    cursor: move;
+}
+
+
+ 
+/**Datepicker
+*******************/
+
+div.ui-datepicker {
+  z-index: 500001 !important;
+  width: 231px;
+  background: #f7f7f7;
+  border: 1px solid #d5d5d5;
+}
+div.ui-datepicker .ui-datepicker-header {
+  padding: 10px;
+  background: #fff;
+  border-bottom: 1px solid #fff;
+  margin-bottom: 5px;
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
+  display: block;
+  position: absolute;
+  width: 1em;
+  overflow: hidden;
+  cursor: pointer;
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next:after,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev:after,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next:before,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before {
+  font-family: dashicons;
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next:after:hover,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev:after:hover,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next:before:hover,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before:hover {
+  cursor: pointer;
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next .ui-icon,
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev .ui-icon {
+  display: none;
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
+  left: 10px;
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before {
+  content: "\f341";
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next {
+  right: 10px;
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-next:after {
+  content: "\f345";
+}
+div.ui-datepicker .ui-datepicker-header .ui-datepicker-title {
+  text-align: center;
+}
+div.ui-datepicker .ui-datepicker-calendar {
+  border-collapse: collapse;
+  width: 100%;
+}
+div.ui-datepicker .ui-datepicker-calendar thead {
+  /*background: #e5e5e5;*/
+  padding: 5px;
+}
+div.ui-datepicker .ui-datepicker-calendar tr td {
+  text-align: center;
+}
+div.ui-datepicker .ui-datepicker-calendar tr td a {
+  display: block;
+  padding: 5px;
+  color: #333;
+  text-decoration: none;
+}
+div.ui-datepicker .ui-datepicker-calendar tr td a.ui-state-active,
+div.ui-datepicker .ui-datepicker-calendar tr td a:hover {
+  color: #fff;
+  background-color: #00aaff;
+}
+div.ui-datepicker .ui-datepicker-calendar tr td.ui-state-disabled a,
+div.ui-datepicker .ui-datepicker-calendar tr td.ui-state-disabled .ui-state-default a {
+  color: #999;
+}
+
+/**Dimension
+*******************/ 
+.sed-bp-form-dimension .invalid-value {
+  display: none;
+  background: #D32F2F;
+  font-size: 0.85em;
+  color: #fff;
+  float: left;
+  padding: 2px 0;
+  border-radius: 3px;
+}
+.sed-bp-form-dimension.invalid .invalid-value {
+  display: block;
+  width: 98%;
+  text-align: center;
+  margin-top: 5px;
+}
+.sed-bp-form-dimension.invalid input[type="text"]:focus {
+  border-color: #D32F2F;
+}
+
+
+/**Multicolor
+*******************/
+
+.sed-bp-form-multi-color .multi-color-item {
+    display: inline-block;
+    font-size: 0;
+    padding: 3px;
+}
+.sed-bp-form-multi-color .multi-color-item label {
+    display: block;
+    text-align: center;
+}
+.sed-bp-form-multi-color .multi-color-item .colorselector {
+    text-align: center;
+    float: none !important;
+    display: block !important;
+}
+
+/**Wp Editor
+*******************/
+div#sed-wp-text-editor-pane {
+    background-color: #eee;
+    position: absolute;
+    width: 650px;
+    height: 530px;
+    z-index: 1060;
+    display: none;
+}
+
+div#sed-wp-editor-dragbar {
+    background-color: #fff;
+    cursor: move;
+}

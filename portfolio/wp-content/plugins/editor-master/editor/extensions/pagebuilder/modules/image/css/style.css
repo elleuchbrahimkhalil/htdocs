@@ -1,0 +1,41 @@
+
+.module-image {
+    display: inline-block;
+    margin: 0;
+    vertical-align: top;
+    position: relative;
+    max-height: 100%;
+    max-width: 100%
+}
+
+.module-image,
+.module-image* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+.module-image .img {
+    display: block;
+}
+
+.module-image img {
+    border: 0px solid;
+    display: block;
+    width: 100% \9;
+    max-width: 100%;
+    height: auto
+}
+
+.module-image.circle {
+    border-radius: 50%
+}
+
+.module-image.circle .img {
+    position: relative;
+    border-radius: 50%
+}
+
+.module-image.circle .img img {
+    border-radius: 50% 
+}

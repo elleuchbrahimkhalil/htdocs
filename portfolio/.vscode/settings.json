@@ -1,0 +1,8 @@
+{
+    "cmake.options.statusBarVisibility": "visible",
+    "php.stubs": [
+        "*",
+        "uopz"
+    ],
+    "cmake.sourceDirectory": "C:/xampp/htdocs/portfolio",
+ }

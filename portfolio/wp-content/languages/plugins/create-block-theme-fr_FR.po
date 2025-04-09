@@ -1,0 +1,395 @@
+# Translation of Plugins - Create Block Theme - Stable (latest release) in French (France)
+# This file is distributed under the same license as the Plugins - Create Block Theme - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2023-12-05 11:25:16+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/4.0.0-alpha.11\n"
+"Language: fr\n"
+"Project-Id-Version: Plugins - Create Block Theme - Stable (latest release)\n"
+
+#: admin/create-theme/theme-tags.php:67
+msgid "Custom Tags"
+msgstr "Étiquettes personnalisées"
+
+#: admin/create-theme/theme-form.php:247
+msgid "Plugin Description"
+msgstr "Description de l’extension"
+
+#. translators: Recommended plugins placeholder.
+#: admin/create-theme/theme-form.php:245
+msgid "Plugin Name"
+msgstr "Nom de l’extension"
+
+#: admin/create-theme/theme-form.php:234 admin/create-theme/theme-form.php:256
+#: admin/create-theme/theme-tags.php:47
+msgid "read more"
+msgstr "lire la suite"
+
+#: admin/create-theme/theme-form.php:224
+msgid "Source: https://example.com/source-url"
+msgstr "Source : https://example.com/source-url"
+
+#: admin/create-theme/theme-form.php:223
+msgid "License Type"
+msgstr "Type de licence"
+
+#. translators: Image credits placeholder.
+#: admin/create-theme/theme-form.php:222
+msgid "Image Title"
+msgstr "Titre de l’image"
+
+#: admin/create-theme/theme-form.php:25
+msgid "Choose what to export"
+msgstr "Choisissez ce que vous souhaitez exporter"
+
+#: admin/create-theme/theme-form.php:241 build/plugin-sidebar.js:1
+msgid "Recommended Plugins"
+msgstr "Extensions recommandées"
+
+#: includes/class-create-block-theme-api.php:108
+msgid "Readme file data retrieved."
+msgstr "Récupération des données du fichier Lisez-moi."
+
+#. translators: 1: New Theme name, 2: Parent Theme Name. 3. Parent Theme URI.
+#. 4. Parent Theme Author. 5. Parent Theme License. 6. Parent Theme License
+#. URI.
+#: admin/create-theme/theme-readme.php:106
+msgid "%1$s is a child theme of %2$s (%3$s), (C) %4$s, [%5$s](%6$s)"
+msgstr "%1$s est un thème enfant de %2$s (%3$s), (C) %4$s, [%5$s](%6$s)"
+
+#. Translators: Recommended plugins link.
+#: admin/create-theme/theme-form.php:255
+msgid "List the recommended plugins for this theme. e.g. contact forms, social media. Plugins must be from the WordPress.org plugin repository (%s)."
+msgstr "Listez les extensions recommandées pour ce  thème, par exemple pour des formulaires de contact, ou des réseaux sociaux. Les extensions doivent provenir du dépôt d’extensions de WordPress.org (%s)."
+
+#. Translators: Bundled resources licenses link.
+#: admin/create-theme/theme-form.php:233
+msgid "All bundled resources must have GPL-compatible licenses (%s)."
+msgstr "Toute ressource incluse doit avoir une licence compatible avec la GPL (%s)."
+
+#: admin/create-theme/theme-form.php:229
+msgid "List the credits for each image you have included in the theme. Include the image name, license type, and source URL."
+msgstr "Listez les crédits de chaque image que vous avez incluse dans le thème. Indiquez le nom de l’image, le type de licence et l’URL de la source."
+
+#: admin/create-theme/theme-form.php:218
+msgid "Image Credits"
+msgstr "Attribution des images"
+
+#: includes/class-create-block-theme-api.php:459
+msgid "There was a problem moving the theme"
+msgstr "Un problème est survenu lors du déplacement du thème"
+
+#: includes/class-create-block-theme-api.php:405
+msgid "Theme Saved."
+msgstr "Thème enregistré."
+
+#: includes/class-create-block-theme-api.php:383
+msgid "Theme Updated."
+msgstr "Thème mis à jour."
+
+#: includes/class-create-block-theme-api.php:263
+msgid "Blank Theme Created."
+msgstr "Thème vierge créé."
+
+#: includes/class-create-block-theme-api.php:171
+msgid "Cloned Theme Created."
+msgstr "Clone du thème créé."
+
+#: includes/class-create-block-theme-api.php:151
+#: includes/class-create-block-theme-api.php:201
+msgid "Theme already exists."
+msgstr "Le thème existe déjà."
+
+#: admin/create-theme/theme-form.php:198 build/plugin-sidebar.js:1
+msgid "Author URI"
+msgstr "URI de l’auteur/autrice"
+
+#: admin/create-theme/theme-form.php:188 build/plugin-sidebar.js:1
+msgid "Author"
+msgstr "Auteur/autrice"
+
+#: admin/create-theme/theme-form.php:178 build/plugin-sidebar.js:1
+msgid "Theme URI"
+msgstr "URI de thème"
+
+#: admin/create-theme/theme-tags.php:69
+msgid "custom, tags, custom-tags"
+msgstr "personnalisé, étiquettes, étiquettes personnalisées"
+
+#: admin/create-theme/theme-tags.php:72
+msgid "Add custom tags (single or hyphenated words, separated by commas)"
+msgstr "Ajouter des étiquettes personnalisées (mots simples ou avec trait d’union, séparés par des virgules) :"
+
+#: admin/create-theme/theme-tags.php:87
+msgid "(max 3 tags)"
+msgstr "(3 étiquettes max)"
+
+#: admin/create-theme/theme-tags.php:47
+msgid "https://make.wordpress.org/themes/handbook/review/required/theme-tags/"
+msgstr "https://make.wordpress.org/themes/handbook/review/required/theme-tags/"
+
+#. Translators: Theme Tags link.
+#: admin/create-theme/theme-tags.php:43
+msgid "Add theme tags to help categorize the theme (%s)."
+msgstr "Ajouter des étiquettes de thème pour aider à catégoriser le thème (%s)."
+
+#: admin/create-theme/theme-tags.php:37
+msgid "Theme Tags"
+msgstr "Étiquette de thème :"
+
+#. translators: 1: New Theme name, 2: Original Theme Name. 3. Original Theme
+#. URI. 4. Original Theme Author. 5. Original Theme License. 6. Original Theme
+#. License URI.
+#: admin/create-theme/theme-readme.php:94
+msgid "%1$s is based on %2$s (%3$s), (C) %4$s, [%5$s](%6$s)"
+msgstr "%1$s est basé sur %2$s (%3$s), (C) %4$s, [%5$s](%6$s)"
+
+#: admin/manage-fonts/font-form-messages.php:110
+msgid "Error: You do not have sufficient permission to edit the theme."
+msgstr "Erreur : vous n’avez pas les droits suffisants pour modifier le thème."
+
+#: admin/manage-fonts/font-form-messages.php:102
+msgid "Error: `DISALLOW_FILE_EDIT` cannot be enabled in wp-config.php to make modifications to the theme using this plugin."
+msgstr "Erreur : `DISALLOW_FILE_EDIT` ne peut pas être activé dans wp-config.php pour faire des modifications du thème en utilisant cette extension."
+
+#: admin/create-theme/theme-form.php:213
+msgid "Upload a new theme screenshot (2mb max | .png only | 1200x900 recommended)"
+msgstr "Téléverser une capture du nouveau thème (2mb max | .png uniquement | 1200x900 recommandé)"
+
+#: admin/create-theme/theme-form.php:208
+msgid "Screenshot"
+msgstr "Capture d’écran :"
+
+#. translators: %s: Theme Name.
+#: admin/create-theme/theme-form.php:106
+msgid "Overwrite %s"
+msgstr "Actualiser %s"
+
+#. translators: %s: Theme Name.
+#: admin/create-theme/theme-form.php:88
+msgid "Clone %s"
+msgstr "Cloner %s"
+
+#. translators: %s: Theme Name.
+#: admin/create-theme/theme-form.php:36
+msgid "Export %s"
+msgstr "Exporter %s"
+
+#. translators: %1$s: Theme name
+#: admin/manage-fonts/font-form-messages.php:92
+msgid "Font definition removed from your theme (%1$s) theme.json file."
+msgstr "La définition de la police a été supprimée du fichier theme.json de votre thème (%1$s)."
+
+#: admin/manage-fonts/font-form-messages.php:71
+msgid "Error removing font asset. WordPress lacks permissions to remove these font assets."
+msgstr "Erreur lors de la suppression de la ressource de la police. WordPress n’a pas les droits nécessaires pour retirer ces ressources de police."
+
+#: admin/class-manage-fonts.php:66
+msgctxt "UI String"
+msgid "Embed local font in the active theme"
+msgstr "Embarquer une police locale dans le thème actif"
+
+#: admin/class-manage-fonts.php:62
+msgctxt "UI String"
+msgid "Embed Google font in the active theme"
+msgstr "Embarquer une police Google dans le thème actif"
+
+#. translators: %1$s: Theme directory
+#: admin/create-theme/form-messages.php:98
+msgid "Your themes directory ( %1$s ) is not writable. Please check your file permissions."
+msgstr "Votre dossier themes (%1$s) n’est pas accessible en écriture. Veuillez vérifier les droits d’écriture de votre serveur."
+
+#. translators: %1$s: Theme name, %2$s: Theme directory
+#: admin/create-theme/form-messages.php:80
+msgid "Your theme ( %1$s ) directory ( %2$s ) is not writable. Please check your file permissions."
+msgstr "Le dossier (%2$s) de votre thème (%1$s) n’est pas accessible en écriture. Veuillez vérifier les droits d’écriture de votre serveur."
+
+#: admin/manage-fonts/font-form-messages.php:80
+msgid "Error handling font changes. WordPress lack permissions to manage the theme font assets."
+msgstr "Erreur lors de la gestion des modifications de police. WordPress n’a pas les droits nécessaires pour gérer les ressources de police du thème."
+
+#: admin/manage-fonts/font-form-messages.php:25
+msgid "Manage Fonts"
+msgstr "Gestion des polices"
+
+#: admin/class-manage-fonts.php:38
+msgctxt "UI String"
+msgid "Manage Theme Fonts"
+msgstr "Gestion des polices du thème"
+
+#. translators: %1$s: Font name, %2$s: Theme name
+#: admin/manage-fonts/font-form-messages.php:60
+msgid "Error adding %1$s font to %2$s theme. The uploaded file is not valid."
+msgstr "Erreur lors de l’ajout de la police %1$s au thème %2$s. Le fichier téléversé n’est pas valide."
+
+#. translators: %1$s: Font family, %2$s: Theme name
+#: admin/manage-fonts/font-form-messages.php:46
+msgid "Error adding %1$s font to %2$s theme. WordPress lack permissions to write the font assets."
+msgstr "Erreur lors de l’ajout de la police %1$s au thème %2$s. WordPress n’a pas les droits pour inscrire les ressources de la police."
+
+#. translators: %1$s: Font family, %2$s: Theme name
+#: admin/manage-fonts/font-form-messages.php:23
+msgid "%1$s font added to %2$s theme."
+msgstr "La police %1$s a été ajoutée au thème %2$s."
+
+#: admin/create-theme/theme-form.php:271
+msgid "Generate"
+msgstr "Générer"
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/create-block-theme"
+msgstr "https://fr.wordpress.org/plugins/create-block-theme"
+
+#. translators: %1$s: Theme name, %2$s: Variation name
+#: admin/create-theme/form-messages.php:61
+msgid "Your variation of %1$s has been created successfully. The new variation file is in %2$s"
+msgstr "Votre variante de %1$s a bien été créée. Le fichier de la nouvelle variante est dans %2$s"
+
+#: admin/create-theme/form-messages.php:13
+msgid "Please specify a variation name."
+msgstr "Veuillez préciser un nom de variante."
+
+#: admin/create-theme/theme-form.php:152
+msgid "Variation Name"
+msgstr "Nom de la variante"
+
+#: admin/create-theme/theme-form.php:150
+msgid "Variation Name (*)"
+msgstr "Nom de la variante (*) :"
+
+#. translators: %1$s: Theme name
+#: admin/create-theme/theme-form.php:136
+msgid "Save user changes as a style variation of %1$s."
+msgstr "Enregistrez les modifications du compte comme variation de style de %1$s."
+
+#: admin/create-theme/theme-form.php:129
+msgid "Create a style variation"
+msgstr "Créer une variante de style"
+
+#: admin/class-create-theme.php:62 admin/class-create-theme.php:63
+#: admin/create-theme/theme-form.php:10 admin/create-theme/theme-form.php:18
+#: build/plugin-sidebar.js:1
+msgctxt "UI String"
+msgid "Create Block Theme"
+msgstr "Create Block Theme"
+
+#: assets/boilerplate/theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "Police système"
+
+#. translators: %1$s: Theme name
+#: admin/create-theme/form-messages.php:43
+msgid "Blank theme created, head over to Appearance > Themes to activate %1$s"
+msgstr "Le thème vierge a été créé, allez dans le menu Apparence > Thèmes pour activer %1$s"
+
+#: admin/create-theme/form-messages.php:29
+msgid "Block theme saved and user customizations cleared!"
+msgstr "Le thème basé sur les blocs est enregistré et les personnalisations de l’utilisateur/utilisatrice sont effacées !"
+
+#: admin/create-theme/form-messages.php:21
+msgid "Block theme exported successfully!"
+msgstr "Le thème basé sur les blocs a bien été exporté !"
+
+#: admin/create-theme/form-messages.php:6
+msgid "Please specify a theme name."
+msgstr "Veuillez indiquer un nom pour le thème."
+
+#: admin/create-theme/theme-form.php:147 admin/create-theme/theme-form.php:157
+msgid "Items indicated with (*) are required."
+msgstr "Les éléments marqués d’une astérisque (*) sont obligatoires."
+
+#: admin/create-theme/theme-form.php:203
+msgid "The URL of the authoring individual or organization."
+msgstr "L’URL de l’auteur/autrice (personne ou organisation)."
+
+#: admin/create-theme/theme-form.php:190 build/plugin-sidebar.js:1
+msgid "the WordPress team"
+msgstr "L’équipe WordPress"
+
+#: admin/create-theme/theme-form.php:193
+msgid "The name of the individual or organization who developed the theme."
+msgstr "Le nom de la personne ou de l’organisation ayant développé le thème."
+
+#: admin/create-theme/theme-form.php:183
+msgid "The URL of a public web page where users can find more information about the theme."
+msgstr "L’URL d’une page web publique où les internautes peuvent trouver plus d’informations sur le thème."
+
+#: admin/create-theme/theme-form.php:173
+msgid "A short description of the theme."
+msgstr "Une brève description du thème."
+
+#: admin/create-theme/theme-form.php:168 admin/create-theme/theme-form.php:170
+msgid "Theme Description"
+msgstr "Description du thème :"
+
+#: admin/create-theme/theme-form.php:163
+msgid "Theme Name"
+msgstr "Nom du thème"
+
+#: admin/create-theme/theme-form.php:161
+msgid "Theme Name (*)"
+msgstr "Nom du thème (*) :"
+
+#: admin/create-theme/theme-form.php:123
+msgid "Generate a boilerplate \"empty\" theme inside of this site's themes directory."
+msgstr "Générez un thème-type « vierge » dans le répertoire des thèmes de ce site."
+
+#: admin/create-theme/theme-form.php:119
+msgid "Create blank theme"
+msgstr "Créer un thème vierge"
+
+#: admin/create-theme/theme-form.php:113
+msgid "Save USER changes as THEME changes and delete the USER changes.  Your changes will be saved in the theme on the folder."
+msgstr "Enregistrez les modifications de l’utilisateur ou de l‘utilisatrice comme modifications de thème, et supprimez les modifications de l’utilisateur ou de l‘utilisatrice. Vos modifications seront enregistrées dans le thème du dossier."
+
+#: admin/create-theme/theme-form.php:95
+msgid "Create a new theme cloning the activated theme. The resulting theme will have all of the assets of the activated theme as well as user changes."
+msgstr "Créez un nouveau thème en clonant le thème activé. Le thème qui en résulte incluera l’ensemble des ressources du thème activé ainsi que les modifications de l’utilisateur/utilisatrice."
+
+#: admin/create-theme/theme-form.php:79
+msgid "Create a new child theme. The currently activated theme will be the parent theme."
+msgstr "Créez un nouveau thème enfant. Le thème actuellement activé deviendra le thème parent."
+
+#. translators: %s: Theme Name.
+#: admin/create-theme/theme-form.php:72
+msgid "Create child of %s"
+msgstr "Créer un thème enfant de %s"
+
+#: admin/create-theme/theme-form.php:61
+msgid "Create a new theme cloning the activated child theme. The parent theme will be the same as the parent of the currently activated theme. The resulting theme will have all of the assets of the activated theme, none of the assets provided by the parent theme, as well as user changes."
+msgstr "Créez un nouveau thème clonant le thème enfant activé. Le thème parent sera le même que le parent du thème actuellement activé. Le thème résultant aura toutes les ressources du thème activé, aucunes des ressources fournies par le thème parent, ainsi que les modifications du compte."
+
+#. translators: %s: Theme Name.
+#: admin/create-theme/theme-form.php:54
+msgid "Create sibling of %s"
+msgstr "Créez un frère/sœur de %s"
+
+#: admin/create-theme/theme-form.php:43
+msgid "Export the activated theme with user changes"
+msgstr "Exportez le thème activé avec les modifications du compte"
+
+#. translators: %1$s: Theme Name.
+#: admin/create-theme/theme-form.php:22
+msgid "Export your current block theme (%1$s) with changes you made to Templates, Template Parts and Global Styles."
+msgstr "Exportez le thème basé sur les blocs actuel (%1$s) avec les modifications que vous avez apporté aux modèles, éléments de modèle et styles globaux."
+
+#: admin/create-theme/theme-form.php:11
+msgid "Activate a block theme to use this tool."
+msgstr "Activez un thème basé sur les blocs pour utiliser cet outil."
+
+#. Author of the plugin
+msgid "WordPress.org"
+msgstr "WordPress.org"
+
+#. Description of the plugin
+msgid "Generates a block theme"
+msgstr "Génère un thème basé sur les blocs"
+
+#. Plugin Name of the plugin
+msgid "Create Block Theme"
+msgstr "Create Block Theme"

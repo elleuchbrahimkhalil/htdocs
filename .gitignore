@@ -1,0 +1,13 @@
+.qodo
+/config.php
+.env
+/node_modules/
+/vendor/
+*.log
+// config.php (à ajouter au .gitignore)
+<?php
+define('DB_HOST', 'serveur-prive');
+define('DB_NAME', 'nom_db');
+define('DB_USER', 'utilisateur_secret');
+define('DB_PASS', 'motdepasse_tres_secret');
+define('ENVIRONMENT', 'production'); // ou 'development'

@@ -1,0 +1,28 @@
+
+.module-text-icon.text-icon-skin1 {
+    display: inline-block;
+    margin: 0;
+    vertical-align: top;
+}
+
+.module-text-icon.text-icon-skin1 .text-icon-wrapper {
+    display: table-cell;
+    table-layout: fixed;
+}
+
+.module-text-icon.text-icon-skin1 .text-icon {
+    display: table-cell;
+    vertical-align: top;
+    position: relative;
+    table-layout: fixed;
+    font-size: 18px;
+}
+
+.module-text-icon.text-icon-skin1 .module-title {
+    display: table-cell;
+    position: relative;
+    width: 100%;  
+    padding: 0 8px; 
+    vertical-align: middle;
+    table-layout: fixed;
+}

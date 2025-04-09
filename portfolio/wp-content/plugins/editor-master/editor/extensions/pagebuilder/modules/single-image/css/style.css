@@ -1,0 +1,60 @@
+
+.module-single-image {
+    display: inline-block;
+    margin: 0;
+    vertical-align: top;
+    position: relative;
+    max-height: 100%;
+    max-width: 100%
+}
+
+.module-single-image,
+.module-single-image* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+.module-single-image .img {
+    display: block;
+}
+
+.module-single-image img {
+    border: 0px solid;
+    display: block;
+    width: 100% \9;
+    max-width: 100%;
+    height: auto
+}
+
+.module-single-image.circle {
+    border-radius: 50%
+}
+
+.module-single-image.circle .img {
+    position: relative;
+    border-radius: 50%
+}
+
+.module-single-image.circle .img img {
+    border-radius: 50% 
+}
+
+.module-single-image .roma > img {
+    filter: grayscale(100%);
+    filter: url("../skins/greyscale/svg/sed-image.svg#greyscale");
+    filter: gray;
+    -webkit-filter: grayscale(1);
+}
+
+.module-single-image .sepia > img {
+    -webkit-filter: sepia(1);
+    -webkit-filter: sepia(100%);
+    -moz-filter: sepia(100%);
+    -ms-filter: sepia(100%);
+    -o-filter: sepia(100%);
+    filter: url("../skins/sepia-toning/svg/sed-image.svg#old-timey"); 
+    filter: sepia(100%);
+    background-color: #5E2612;
+    zoom: 1;
+}
