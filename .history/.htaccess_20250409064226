@@ -1,0 +1,19 @@
+# Activation du module de réécriture
+RewriteEngine On
+
+# Définir exacueil.php comme page par défaut
+DirectoryIndex exacueil.php
+
+# Redirection des erreurs 404
+ErrorDocument 404 /exacueil.php
+
+# Règles pour GitHub Pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ exacueil.php?path=$1 [L,QSA]
+
+# Empêcher l'accès aux fichiers sensibles
+<FilesMatch "\.(env|log|htaccess)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
