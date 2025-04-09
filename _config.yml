@@ -1,0 +1,5 @@
+theme: jekyll-theme-primer
+title: Mon Site Statique
+description: Site hébergé sur GitHub Pages
+url: "https://elleuchbrahimkhalil.github.io"
+baseurl: "/htdocs"
