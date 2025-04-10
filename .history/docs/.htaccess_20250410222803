@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Redirige les requêtes vers les fichiers PHP correspondants
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)\.html$ $1.php [L]
+    
+    # Redirection de la racine vers exacueil.php
+    RewriteRule ^$ /exacueil.php [L]
+</IfModule>
+
+# Désactive l'exécution des fichiers PHP directement
+<Files *.php>
+    Deny from all
+</Files>
