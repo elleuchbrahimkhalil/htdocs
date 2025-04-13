@@ -759,10 +759,6 @@ displayUserAvatar();
                             <img src="https://developers.google.com/static/pay/api/images/brand-guidelines/google-pay-mark.png" alt="Google Pay">
                             <div class="payment-method-title">Google Pay</div>
                         </div>
-                        <div class="payment-method" data-method="wise">
-                            <img src="https://wise.com/public-resources/assets/logos/wise/brand_logo.svg" alt="Wise">
-                            <div class="payment-method-title">Wise</div>
-                        </div>
                     </div>
                     <input type="hidden" name="payment_method" id="payment_method" value="">
                 </div>
@@ -1256,82 +1252,14 @@ $additional_scripts = "
 // Inclure le pied de page
 include 'footer.php';
 ?>
-<div id="google-pay-container" style="display: none; margin-top: 20px; text-align: center;"></div>
+<div id="google-pay-container" style="display: none;"></div>
 
 <script src="https://pay.google.com/gp/p/js/pay.js"></script>
 <script src="assets/js/google-pay-integration.js"></script>
 <script>
   // Appeler cette fonction lorsque la page est chargée
   document.addEventListener('DOMContentLoaded', function() {
-    <?php if ($solution): ?>
-      // Pour le paiement spécifique
-      checkGooglePayAvailability(
-        <?php echo $solution['id']; ?>, 
-        <?php echo floatval($solution['price']); ?>
-      );
-    <?php endif; ?>
-    
-    // Pour les paiements en attente
-    document.querySelectorAll('.payment-card').forEach(card => {
-      const payButton = card.querySelector('.btn-primary');
-      if (payButton) {
-        const solutionId = payButton.getAttribute('onclick').match(/showPaymentForm\((\d+)/)[1];
-        const priceElement = card.querySelector('.payment-card-price');
-        if (priceElement) {
-          const price = parseFloat(priceElement.textContent);
-          
-          // Ajouter un bouton Google Pay à chaque carte de paiement
-          const gpayContainer = document.createElement('div');
-          gpayContainer.className = 'gpay-button-container';
-          gpayContainer.style.marginTop = '10px';
-          
-          card.querySelector('.payment-card-footer').appendChild(gpayContainer);
-          
-          // Initialiser le bouton Google Pay pour cette carte
-          const tempClient = new google.payments.api.PaymentsClient({
-            environment: 'PRODUCTION'
-          });
-          
-          const gpayButton = tempClient.createButton({
-            onClick: () => onGooglePaymentButtonClicked(solutionId, price),
-            buttonColor: 'black',
-            buttonType: 'pay',
-            buttonSizeMode: 'static'
-          });
-          
-          gpayContainer.appendChild(gpayButton);
-        }
-      }
-    });
-  });
-  
-  // Fonction pour afficher le formulaire de paiement modal avec Google Pay
-  function showPaymentForm(solutionId, problemTitle, price) {
-    // Code existant pour afficher le modal
-    document.getElementById('modal-solution-id').value = solutionId;
-    document.getElementById('modal-problem-title').textContent = problemTitle;
-    document.getElementById('modal-price').textContent = price.toFixed(2);
-    document.getElementById('modal-total').textContent = price.toFixed(2);
-    document.getElementById('modal-button-price').textContent = price.toFixed(2);
-    
-    const modal = document.getElementById('payment-modal');
-    modal.style.display = 'block';
-    
-    setTimeout(() => {
-      modal.classList.add('active');
-    }, 10);
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.onclick = hidePaymentModal;
-    document.body.appendChild(overlay);
-    
-    document.body.style.overflow = 'hidden';
-    
-    // Initialiser Google Pay pour ce paiement spécifique
+    // Remplacer par l'ID de la solution et son prix
     checkGooglePayAvailability(solutionId, price);
-  }
-</script>
-<script>
-  console.log('Page loaded, checking if Google Pay script is available:', typeof google !== 'undefined' ? 'Yes' : 'No');
+  });
 </script>

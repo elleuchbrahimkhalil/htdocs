@@ -214,34 +214,6 @@ $additional_css = "
         color: #2c3e50;
     }
     
-    .payment-method[data-method=\"google_pay\"] {
-        background-color: #f8f9fa;
-    }
-
-    .payment-method[data-method=\"google_pay\"] img {
-        height: 24px;
-        margin-bottom: 10px;
-    }
-
-    .payment-method[data-method=\"google_pay\"].selected {
-        border-color: #4285F4;
-        background-color: #e8f0fe;
-    }
-
-    .gpay-button {
-        height: 40px;
-        width: 100%;
-        border-radius: 4px;
-        background-origin: content-box;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        outline: 0;
-        border: 0;
-        cursor: pointer;
-        padding: 0;
-    }
-    
     .btn-pay {
         background: linear-gradient(135deg, #3498db, #2980b9);
         color: white;
@@ -597,12 +569,6 @@ displayUserAvatar();
     <?php unset($_SESSION['success_message']); ?>
 <?php endif; ?>
 
-<?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
-    <div class="alert alert-success">
-        <i class="fas fa-check-circle"></i> Paiement effectué avec succès via Google Pay !
-    </div>
-<?php endif; ?>
-
 <div class="payment-container">
     <div class="payment-header">
         <h2>Gérez vos paiements</h2>
@@ -758,10 +724,6 @@ displayUserAvatar();
                         <div class="payment-method" data-method="google_pay">
                             <img src="https://developers.google.com/static/pay/api/images/brand-guidelines/google-pay-mark.png" alt="Google Pay">
                             <div class="payment-method-title">Google Pay</div>
-                        </div>
-                        <div class="payment-method" data-method="wise">
-                            <img src="https://wise.com/public-resources/assets/logos/wise/brand_logo.svg" alt="Wise">
-                            <div class="payment-method-title">Wise</div>
                         </div>
                     </div>
                     <input type="hidden" name="payment_method" id="payment_method" value="">
@@ -1147,24 +1109,16 @@ $additional_scripts = "
     }
 
     // Fonction pour traiter le paiement Google Pay
-    function processGooglePayPayment(paymentData, solutionId) {
-        return fetch('api/process_google_pay.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                paymentData: paymentData,
-                solutionId: solutionId
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.error || 'Erreur lors du traitement du paiement');
-                });
-            }
-            return response.json();
+    function processGooglePayPayment(paymentData) {
+        // Ici, vous enverriez les données de paiement à votre serveur
+        // pour traitement avec votre passerelle de paiement
+        console.log('Données de paiement Google Pay:', paymentData);
+        
+        // Simuler un traitement réussi
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve({});
+            }, 1000);
         });
     }
 
@@ -1203,14 +1157,6 @@ $additional_scripts = "
             if (paymentMethod === 'google_pay') {
                 e.preventDefault();
                 
-                // Récupérer l'ID de la solution
-                let solutionId;
-                if (form.id === 'payment-form') {
-                    solutionId = form.querySelector('input[name=\"solution_id\"]').value;
-                } else {
-                    solutionId = document.getElementById('modal-solution-id').value;
-                }
-                
                 // Récupérer le prix
                 let price = 0;
                 if (form.id === 'payment-form') {
@@ -1219,31 +1165,22 @@ $additional_scripts = "
                     price = parseFloat(document.getElementById('modal-total').textContent);
                 }
                 
-                // Afficher un indicateur de chargement
-                const submitButton = form.querySelector('button[type=\"submit\"]');
-                submitButton.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Traitement en cours...';
-                submitButton.disabled = true;
-                
                 // Créer la requête de paiement
                 const paymentRequest = createGooglePayRequest(price);
                 
                 // Lancer le flux de paiement Google Pay
                 googlePayClient.loadPaymentData(paymentRequest)
                     .then(paymentData => {
-                        // Traiter le paiement via notre API
-                        return processGooglePayPayment(paymentData, solutionId);
+                        // Traiter le paiement
+                        return processGooglePayPayment(paymentData);
                     })
-                    .then(response => {
-                        // Rediriger vers la page de paiement avec un message de succès
-                        window.location.href = 'payment.php?success=1';
+                    .then(() => {
+                        // Soumettre le formulaire après le traitement réussi
+                        form.submit();
                     })
                     .catch(err => {
                         console.error('Erreur lors du paiement Google Pay:', err);
-                        alert('Une erreur est survenue lors du paiement avec Google Pay: ' + err.message);
-                        
-                        // Réinitialiser le bouton
-                        submitButton.innerHTML = '<i class=\"fas fa-lock\"></i> Payer';
-                        submitButton.disabled = false;
+                        alert('Une erreur est survenue lors du paiement avec Google Pay.');
                     });
             }
         });
@@ -1256,82 +1193,3 @@ $additional_scripts = "
 // Inclure le pied de page
 include 'footer.php';
 ?>
-<div id="google-pay-container" style="display: none; margin-top: 20px; text-align: center;"></div>
-
-<script src="https://pay.google.com/gp/p/js/pay.js"></script>
-<script src="assets/js/google-pay-integration.js"></script>
-<script>
-  // Appeler cette fonction lorsque la page est chargée
-  document.addEventListener('DOMContentLoaded', function() {
-    <?php if ($solution): ?>
-      // Pour le paiement spécifique
-      checkGooglePayAvailability(
-        <?php echo $solution['id']; ?>, 
-        <?php echo floatval($solution['price']); ?>
-      );
-    <?php endif; ?>
-    
-    // Pour les paiements en attente
-    document.querySelectorAll('.payment-card').forEach(card => {
-      const payButton = card.querySelector('.btn-primary');
-      if (payButton) {
-        const solutionId = payButton.getAttribute('onclick').match(/showPaymentForm\((\d+)/)[1];
-        const priceElement = card.querySelector('.payment-card-price');
-        if (priceElement) {
-          const price = parseFloat(priceElement.textContent);
-          
-          // Ajouter un bouton Google Pay à chaque carte de paiement
-          const gpayContainer = document.createElement('div');
-          gpayContainer.className = 'gpay-button-container';
-          gpayContainer.style.marginTop = '10px';
-          
-          card.querySelector('.payment-card-footer').appendChild(gpayContainer);
-          
-          // Initialiser le bouton Google Pay pour cette carte
-          const tempClient = new google.payments.api.PaymentsClient({
-            environment: 'PRODUCTION'
-          });
-          
-          const gpayButton = tempClient.createButton({
-            onClick: () => onGooglePaymentButtonClicked(solutionId, price),
-            buttonColor: 'black',
-            buttonType: 'pay',
-            buttonSizeMode: 'static'
-          });
-          
-          gpayContainer.appendChild(gpayButton);
-        }
-      }
-    });
-  });
-  
-  // Fonction pour afficher le formulaire de paiement modal avec Google Pay
-  function showPaymentForm(solutionId, problemTitle, price) {
-    // Code existant pour afficher le modal
-    document.getElementById('modal-solution-id').value = solutionId;
-    document.getElementById('modal-problem-title').textContent = problemTitle;
-    document.getElementById('modal-price').textContent = price.toFixed(2);
-    document.getElementById('modal-total').textContent = price.toFixed(2);
-    document.getElementById('modal-button-price').textContent = price.toFixed(2);
-    
-    const modal = document.getElementById('payment-modal');
-    modal.style.display = 'block';
-    
-    setTimeout(() => {
-      modal.classList.add('active');
-    }, 10);
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.onclick = hidePaymentModal;
-    document.body.appendChild(overlay);
-    
-    document.body.style.overflow = 'hidden';
-    
-    // Initialiser Google Pay pour ce paiement spécifique
-    checkGooglePayAvailability(solutionId, price);
-  }
-</script>
-<script>
-  console.log('Page loaded, checking if Google Pay script is available:', typeof google !== 'undefined' ? 'Yes' : 'No');
-</script>

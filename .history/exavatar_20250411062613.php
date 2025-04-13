@@ -379,9 +379,6 @@ function displayUserAvatar() {
                     <img src="https://developers.google.com/static/pay/api/images/brand-guidelines/google-pay-mark.svg" alt="Google Pay">
                     Payer avec Google Pay
                 </a>
-                <a href="change_name.php" class="menu-button profile-button">
-                    <i class="fas fa-user-edit"></i> Changer mon nom
-                </a>
                 <a href="exlogout.php" class="menu-button logout-button">Déconnexion</a>
             </div>
         </div>

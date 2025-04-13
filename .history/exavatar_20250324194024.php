@@ -130,22 +130,22 @@ function displayUserAvatar() {
 
         /* Menu Utilisateur (Vertical) */
         .user-menu-' . $uniqueId . ' {
-              position: fixed;
-    bottom: 110px;
-    right: 25px;
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    padding: 25px 18px; /* Augmenter le padding vertical */
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    display: none;
-    width: 280px; /* Légèrement plus large */
-    z-index: 1000;
-    max-height: 85vh; /* Augmenter la hauteur maximale */
-    overflow-y: auto;
-    color: white;
-    border: 1px solid rgba(255,255,255,0.1);
-    text-align: center;
-}
+            position: fixed;
+            bottom: 110px;
+            right: 25px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: none;
+            width: 260px;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
 
         .user-menu-' . $uniqueId . '.active {
             display: block;
@@ -312,7 +312,7 @@ function displayUserAvatar() {
             border-radius: 50%;
             background: #3498db;
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
             cursor: pointer;
@@ -379,9 +379,7 @@ function displayUserAvatar() {
                     <img src="https://developers.google.com/static/pay/api/images/brand-guidelines/google-pay-mark.svg" alt="Google Pay">
                     Payer avec Google Pay
                 </a>
-                <a href="change_name.php" class="menu-button profile-button">
-                    <i class="fas fa-user-edit"></i> Changer mon nom
-                </a>
+                <a href="exacueil.php" class="menu-button profile-button">Voir mon profil</a>
                 <a href="exlogout.php" class="menu-button logout-button">Déconnexion</a>
             </div>
         </div>

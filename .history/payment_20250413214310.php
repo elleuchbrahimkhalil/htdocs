@@ -1332,6 +1332,3 @@ include 'footer.php';
     checkGooglePayAvailability(solutionId, price);
   }
 </script>
-<script>
-  console.log('Page loaded, checking if Google Pay script is available:', typeof google !== 'undefined' ? 'Yes' : 'No');
-</script>

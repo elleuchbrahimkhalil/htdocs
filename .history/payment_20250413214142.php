@@ -759,10 +759,6 @@ displayUserAvatar();
                             <img src="https://developers.google.com/static/pay/api/images/brand-guidelines/google-pay-mark.png" alt="Google Pay">
                             <div class="payment-method-title">Google Pay</div>
                         </div>
-                        <div class="payment-method" data-method="wise">
-                            <img src="https://wise.com/public-resources/assets/logos/wise/brand_logo.svg" alt="Wise">
-                            <div class="payment-method-title">Wise</div>
-                        </div>
                     </div>
                     <input type="hidden" name="payment_method" id="payment_method" value="">
                 </div>
@@ -1331,7 +1327,4 @@ include 'footer.php';
     // Initialiser Google Pay pour ce paiement spécifique
     checkGooglePayAvailability(solutionId, price);
   }
-</script>
-<script>
-  console.log('Page loaded, checking if Google Pay script is available:', typeof google !== 'undefined' ? 'Yes' : 'No');
 </script>

@@ -1256,7 +1256,9 @@ $additional_scripts = "
 // Inclure le pied de page
 include 'footer.php';
 ?>
-<div id="google-pay-container" style="display: none; margin-top: 20px; text-align: center;"></div>
+<div id="google-pay-container" style="border: 1px solid red; padding: 20px; margin: 20px 0;">
+  <p>Le bouton Google Pay devrait apparaître ici</p>
+</div>
 
 <script src="https://pay.google.com/gp/p/js/pay.js"></script>
 <script src="assets/js/google-pay-integration.js"></script>
@@ -1331,7 +1333,4 @@ include 'footer.php';
     // Initialiser Google Pay pour ce paiement spécifique
     checkGooglePayAvailability(solutionId, price);
   }
-</script>
-<script>
-  console.log('Page loaded, checking if Google Pay script is available:', typeof google !== 'undefined' ? 'Yes' : 'No');
 </script>

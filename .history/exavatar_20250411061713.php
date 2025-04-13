@@ -99,7 +99,7 @@ function displayUserAvatar() {
             transform: scale(1.1);
         }
 
-        /* Bouton Pulse */
+        /* Amélioration du bouton avatar */
         .pulse-button-' . $uniqueId . ' {
             background: url("' . $avatarUrl . '") no-repeat center center;
             background-size: cover;
@@ -112,107 +112,134 @@ function displayUserAvatar() {
             bottom: 25px;
             right: 25px;
             animation: pulse-' . $uniqueId . ' 2s infinite;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 1001;
-            transition: transform 0.3s;
-            border: 3px solid #3498db;
+            transition: all 0.3s;
+            border: 4px solid #3498db;
         }
         
         .pulse-button-' . $uniqueId . ':hover {
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(5deg);
+            border-color: #2ecc71;
         }
 
+        /* Animation pulse améliorée */
         @keyframes pulse-' . $uniqueId . ' {
             0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+            70% { box-shadow: 0 0 0 15px rgba(52, 152, 219, 0); }
             100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
         }
 
-        /* Menu Utilisateur (Vertical) */
+        /* Menu utilisateur amélioré */
         .user-menu-' . $uniqueId . ' {
-              position: fixed;
-    bottom: 110px;
-    right: 25px;
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    padding: 25px 18px; /* Augmenter le padding vertical */
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    display: none;
-    width: 280px; /* Légèrement plus large */
-    z-index: 1000;
-    max-height: 85vh; /* Augmenter la hauteur maximale */
-    overflow-y: auto;
-    color: white;
-    border: 1px solid rgba(255,255,255,0.1);
-    text-align: center;
-}
-
-        .user-menu-' . $uniqueId . '.active {
-            display: block;
-            animation: slide-up-' . $uniqueId . ' 0.3s ease-out;
-        }
-        
-        @keyframes slide-up-' . $uniqueId . ' {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            position: fixed;
+            bottom: 110px;
+            right: 25px;
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            padding: 25px 20px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            width: 280px;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            backdrop-filter: blur(5px);
         }
 
-        /* En-tête du Menu */
+        /* Bouton d\'upload d\'avatar amélioré */
+        .user-menu-' . $uniqueId . ' .upload-avatar-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            border: 3px solid rgba(255,255,255,0.8);
+        }
+
+        .user-menu-' . $uniqueId . ' .upload-avatar-button:hover {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .user-menu-' . $uniqueId . ' .upload-avatar-button img {
+            width: 35px;
+            height: 35px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+        }
+
+        /* Nom d\'utilisateur amélioré */
         .user-menu-' . $uniqueId . ' .user-name {
             text-align: center;
             font-weight: bold;
-            margin-top: 30px;
-            margin-bottom: 16px;
-            font-size: 18px;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 20px;
             color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 2px solid rgba(255,255,255,0.15);
+            padding-bottom: 12px;
+            letter-spacing: 0.5px;
         }
 
-        /* Statistiques de l Utilisateur */
+        /* Statistiques améliorées */
         .user-menu-' . $uniqueId . ' .user-stats {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 20px;
             justify-content: center;
         }
 
         .user-menu-' . $uniqueId . ' .stat-item {
             text-align: center;
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
+            padding: 12px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
             width: calc(50% - 12px);
             box-sizing: border-box;
-            transition: transform 0.2s, background 0.2s;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         
         .user-menu-' . $uniqueId . ' .stat-item:hover {
             background: rgba(255,255,255,0.15);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
 
         .user-menu-' . $uniqueId . ' .stat-value {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #3498db;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .user-menu-' . $uniqueId . ' .stat-label {
             font-size: 11px;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255,255,255,0.9);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
 
-        /* Boutons du Menu */
+        /* Boutons du menu améliorés */
         .user-menu-' . $uniqueId . ' .menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
             width: 100%;
         }
@@ -221,10 +248,10 @@ function displayUserAvatar() {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 90%;
-            padding: 10px;
+            width: 100%;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
             text-align: center;
             text-decoration: none;
@@ -235,6 +262,8 @@ function displayUserAvatar() {
             z-index: 1;
             margin: 0 auto;
             color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            letter-spacing: 0.5px;
         }
         
         .user-menu-' . $uniqueId . ' .menu-button:before {
@@ -244,8 +273,8 @@ function displayUserAvatar() {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: rgba(255,255,255,0.1);
-            transition: all 0.3s;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s;
             z-index: -1;
         }
         
@@ -253,81 +282,42 @@ function displayUserAvatar() {
             left: 0;
         }
 
+        .user-menu-' . $uniqueId . ' .menu-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
         .user-menu-' . $uniqueId . ' .payment-button {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
-
-        .user-menu-' . $uniqueId . ' .payment-button:hover {
-            background: linear-gradient(135deg, #2980b9, #3498db);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .user-menu-' . $uniqueId . ' .profile-button {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-        }
-
-        .user-menu-' . $uniqueId . ' .profile-button:hover {
-            background: linear-gradient(135deg, #8e44ad, #9b59b6);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, #3498db, #2980b9);
         }
 
         .user-menu-' . $uniqueId . ' .google-pay-button {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #222, #000);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .user-menu-' . $uniqueId . ' .google-pay-button:hover {
-            background: linear-gradient(135deg, #000, #222);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, #222, #000);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
 
         .user-menu-' . $uniqueId . ' .google-pay-button img {
-            height: 20px;
-            margin-right: 6px;
+            height: 22px;
+            margin-right: 8px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
         }
 
         .user-menu-' . $uniqueId . ' .logout-button {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
         }
 
-        .user-menu-' . $uniqueId . ' .logout-button:hover {
-            background: linear-gradient(135deg, #c0392b, #e74c3c);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        /* Animation d\'apparition du menu */
+        @keyframes slide-up-' . $uniqueId . ' {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Styles pour le bouton d\'upload d\'avatar */
-        .user-menu-' . $uniqueId . ' .upload-avatar-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #3498db;
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-
-        .user-menu-' . $uniqueId . ' .upload-avatar-button:hover {
-            background: #2980b9;
-            transform: translateX(-50%) scale(1.05);
-        }
-
-        .user-menu-' . $uniqueId . ' .upload-avatar-button img {
-            width: 30px;
-            height: 30px;
+        
+        .user-menu-' . $uniqueId . '.active {
+            display: block;
+            animation: slide-up-' . $uniqueId . ' 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
     </style>
 
@@ -378,9 +368,6 @@ function displayUserAvatar() {
                 <a href="google_wallet_payment.php" class="menu-button google-pay-button">
                     <img src="https://developers.google.com/static/pay/api/images/brand-guidelines/google-pay-mark.svg" alt="Google Pay">
                     Payer avec Google Pay
-                </a>
-                <a href="change_name.php" class="menu-button profile-button">
-                    <i class="fas fa-user-edit"></i> Changer mon nom
                 </a>
                 <a href="exlogout.php" class="menu-button logout-button">Déconnexion</a>
             </div>
