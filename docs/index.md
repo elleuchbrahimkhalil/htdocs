@@ -1,8 +1,0 @@
----
-layout: none
-permalink: /index.html
----
-
-<script>
-window.location.href = "/exacueil.php";
-</script>
