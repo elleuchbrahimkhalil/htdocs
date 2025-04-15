@@ -1079,58 +1079,39 @@ $additional_scripts = "
 
     // Vérifier si Google Pay est disponible
     function checkGooglePayAvailability() {
-        try {
-            if (typeof google === 'undefined' || !google.payments || !google.payments.api) {
-                console.error('Google Pay API not available');
-                document.querySelectorAll('.payment-method[data-method=\"google_pay\"]').forEach(method => {
-                    method.style.display = 'none';
-                });
-                return;
-            }
-            
-            const googlePayClient = new google.payments.api.PaymentsClient({
-                environment: 'TEST'
-            });
-            
-            const isReadyToPayRequest = {
-                apiVersion: 2,
-                apiVersionMinor: 0,
-                allowedPaymentMethods: [{
-                    type: 'CARD',
-                    parameters: {
-                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                        allowedCardNetworks: ['MASTERCARD', 'VISA']
-                    }
-                }]
-            };
+        const isReadyToPayRequest = {
+            apiVersion: 2,
+            apiVersionMinor: 0,
+            allowedPaymentMethods: [{
+                type: 'CARD',
+                parameters: {
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['MASTERCARD', 'VISA']
+                }
+            }]
+        };
 
-            googlePayClient.isReadyToPay(isReadyToPayRequest)
-                .then(function(response) {
-                    if (response.result) {
-                        // Google Pay est disponible, afficher le bouton
-                        document.querySelectorAll('.payment-method[data-method=\"google_pay\"]').forEach(method => {
-                            method.style.display = 'block';
-                        });
-                    } else {
-                        // Google Pay n'est pas disponible, masquer le bouton
-                        document.querySelectorAll('.payment-method[data-method=\"google_pay\"]').forEach(method => {
-                            method.style.display = 'none';
-                        });
-                    }
-                })
-                .catch(function(err) {
-                    console.error('Erreur lors de la vérification de Google Pay:', err);
-                    // Masquer le bouton en cas d'erreur
+        googlePayClient.isReadyToPay(isReadyToPayRequest)
+            .then(function(response) {
+                if (response.result) {
+                    // Google Pay est disponible, afficher le bouton
+                    document.querySelectorAll('.payment-method[data-method=\"google_pay\"]').forEach(method => {
+                        method.style.display = 'block';
+                    });
+                } else {
+                    // Google Pay n'est pas disponible, masquer le bouton
                     document.querySelectorAll('.payment-method[data-method=\"google_pay\"]').forEach(method => {
                         method.style.display = 'none';
                     });
+                }
+            })
+            .catch(function(err) {
+                console.error('Erreur lors de la vérification de Google Pay:', err);
+                // Masquer le bouton en cas d'erreur
+                document.querySelectorAll('.payment-method[data-method=\"google_pay\"]').forEach(method => {
+                    method.style.display = 'none';
                 });
-        } catch (error) {
-            console.error('Error checking Google Pay availability:', error);
-            document.querySelectorAll('.payment-method[data-method=\"google_pay\"]').forEach(method => {
-                method.style.display = 'none';
             });
-        }
     }
 
     // Fonction pour créer la requête de paiement Google Pay

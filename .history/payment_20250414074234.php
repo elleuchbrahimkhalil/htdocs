@@ -1277,8 +1277,10 @@ include 'footer.php';
 ?>
 <div id="google-pay-container" style="margin-top: 20px; text-align: center;"></div>
 
+<?php if ($use_google_pay): ?>
 <script src="https://pay.google.com/gp/p/js/pay.js"></script>
 <script src="assets/js/google-pay-integration.js"></script>
+<?php endif; ?>
 <script>
   // Appeler cette fonction lorsque la page est chargée
   document.addEventListener('DOMContentLoaded', function() {
