@@ -189,27 +189,22 @@ try {
     // Récupérer les favoris avec les détails des problèmes
     $sql = "
         SELECT p.*, u.username, u.avatar_url,
-           (SELECT COUNT(*) FROM solutions 
-            WHERE solutions.problem_id = p.problem_id 
-            AND solutions.user_id = :user_id 
-            AND (solutions.status = 'accepted')) AS is_solved_by_me
+           (SELECT COUNT(*) FROM solutions WHERE solutions.problem_id = p.problem_id AND solutions.user_id = ? AND (solutions.status = 'accepted')) AS is_solved_by_me
         FROM favorites f
         JOIN problems p ON f.problem_id = p.problem_id
         JOIN users u ON p.user_id = u.id
-        WHERE f.user_id = :user_id
+        WHERE f.user_id = ?
         ORDER BY f.created_at DESC
-        OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
     ";
     
     $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT); // Répété car utilisé deux fois
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->bindValue(':limit', $problems_per_page, PDO::PARAM_INT);
-    $stmt->execute();
+    $stmt->execute([$user_id, $user_id, $offset, $problems_per_page]);
     $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
 } catch (Exception $e) {
+    error_log("User ID: " . $user_id);
+    error_log("Problem ID: " . $problem_id);
     error_log("Erreur lors de la récupération des favoris: " . $e->getMessage());
     $favorites = [];
     $total_pages = 0;

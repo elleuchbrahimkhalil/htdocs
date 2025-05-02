@@ -55,34 +55,30 @@ try {
     
     error_log("Checking existence of problem_id: " . $problem_id); // Debugging line
     // Vérifier d'abord si le problème existe
-    $stmt_check = $pdo->prepare("SELECT problem_id FROM problems WHERE problem_id = :problem_id");
-    $stmt_check->bindValue(':problem_id', $problem_id, PDO::PARAM_INT);
-    $stmt_check->execute();
+
+    $stmt_check = $pdo->prepare("SELECT problem_id FROM problems WHERE problem_id = ?");
+    $stmt_check->execute([$problem_id]);
+    
     
     if (!$stmt_check->fetch()) {
         throw new Exception("Le problème demandé n'existe pas");
     }
     
     // Vérifier si le problème est déjà dans les favoris
-    $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = :user_id AND problem_id = :problem_id");
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindValue(':problem_id', $problem_id, PDO::PARAM_INT);
-    $stmt->execute();
+    $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = ? AND problem_id = ?");
+    $stmt->execute([$user_id, $problem_id]);
     $favorite = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if ($favorite) {
         // Le problème est déjà en favori, on le supprime
-        $stmt = $pdo->prepare("DELETE FROM favorites WHERE id = :id");
-        $stmt->bindValue(':id', $favorite['id'], PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt = $pdo->prepare("DELETE FROM favorites WHERE id = ?");
+        $stmt->execute([$favorite['id']]);
         $message = "Problème retiré des favoris";
         $action = "removed";
     } else {
         // Le problème n'est pas en favori, on l'ajoute
-        $stmt = $pdo->prepare("INSERT INTO favorites (user_id, problem_id, created_at) VALUES (:user_id, :problem_id, GETDATE())");
-        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindValue(':problem_id', $problem_id, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt = $pdo->prepare("INSERT INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, GETDATE())");
+        $stmt->execute([$user_id, $problem_id]);
         $message = "Problème ajouté aux favoris";
         $action = "added";
     }
