@@ -204,16 +204,15 @@ $additional_scripts = "
             formData.append('problem_id', problemId);
             formData.append('favorite_action', isCurrentlyActive ? 'remove' : 'add');
             
-            // Envoyer la requête vers manage_favorites.php
+            // Envoyer la requête vers manage_favorites.php (même logique)
             fetch('manage_favorites.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            .then(response => {
+                if (response.ok) {
                     // Succès - changer l'état du bouton
-                    if (data.action === 'removed') {
+                    if (isCurrentlyActive) {
                         // Retirer des favoris
                         this.classList.remove('active');
                         this.title = 'Ajouter aux favoris';
@@ -225,8 +224,14 @@ $additional_scripts = "
                             statsSpan.innerHTML = '<i class=\"fas fa-heart\"></i> ' + Math.max(0, currentCount - 1) + ' favoris';
                         }
                         
+                        // Animation de suppression
+                        heartIcon.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            heartIcon.style.transform = '';
+                        }, 200);
+                        
                         showMessage('Retiré des favoris!', 'info');
-                    } else if (data.action === 'added') {
+                    } else {
                         // Ajouter aux favoris
                         this.classList.add('active');
                         this.title = 'Retirer des favoris';
@@ -238,21 +243,21 @@ $additional_scripts = "
                             statsSpan.innerHTML = '<i class=\"fas fa-heart\"></i> ' + (currentCount + 1) + ' favoris';
                         }
                         
+                        // Animation d'ajout
+                        heartIcon.style.transform = 'scale(1.3)';
+                        setTimeout(() => {
+                            heartIcon.style.transform = '';
+                        }, 200);
+                        
                         showMessage('Ajouté aux favoris!', 'success');
                     }
-                    
-                    // Animation
-                    heartIcon.style.transform = 'scale(1.3)';
-                    setTimeout(() => {
-                        heartIcon.style.transform = '';
-                    }, 200);
                 } else {
-                    throw new Error(data.message || 'Erreur serveur');
+                    throw new Error('Erreur serveur');
                 }
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                showMessage('Erreur: ' + error.message, 'error');
+                showMessage('Erreur lors de la mise à jour des favoris', 'error');
             })
             .finally(() => {
                 // Réactiver le bouton
@@ -330,6 +335,17 @@ $additional_scripts = "
             }, index * 100);
         });
     });
+    
+    // Fonction pour actualiser une carte spécifique
+    function refreshCard(problemId) {
+        const card = document.querySelector('[data-problem-id=\"' + problemId + '\"]').closest('.publication-card');
+        if (card) {
+            card.style.opacity = '0.7';
+            setTimeout(() => {
+                card.style.opacity = '1';
+            }, 500);
+        }
+    }
     
     // Gestion des erreurs de chargement d'images
     document.addEventListener('DOMContentLoaded', function() {

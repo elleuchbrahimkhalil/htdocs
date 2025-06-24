@@ -1,26 +1,5 @@
 <?php
-// Vérifier la connexion de l'utilisateur
-require_once 'verification.php';
-
-// Rediriger si l'utilisateur n'est pas connecté
-if (!isLoggedIn()) {
-    header('Location: login.php');
-    exit;
-}
-
-// Inclure le fichier contenant la fonction pour afficher l'avatar
-require 'include_avatar.php';
-
-// Récupérer les informations de l'utilisateur
-$user = getCurrentUser();
-
-// Set page title
-$page_title = "Mes Favoris";
-
-// Variables de débogage - DÉFINIR EN PREMIER
-$debug_mode = isset($_GET['debug']) && $_GET['debug'] == '1';
-
-// Additional CSS specific to this page
+// Remplacer la section CSS dans favorites.php par :
 $additional_css = "
     .publications-grid{
         display: flex;
@@ -147,86 +126,7 @@ $additional_css = "
     }
 ";
 
-// Traitement de la suppression des favoris (même logique que manage_favorites.php)
-if (isset($_POST['favorite_action']) && isset($_POST['problem_id'])) {
-    require_once 'db_connect.php';
-    
-    $problemId = $_POST['problem_id'];
-    $action = $_POST['favorite_action'];
-    
-    if ($action === 'remove') {
-        // Retirer des favoris
-        $conn = connect();
-        $stmt = $conn->prepare("DELETE FROM favorites WHERE user_id = ? AND problem_id = ?");
-        $stmt->execute([$user['id'], $problemId]);
-    }
-    
-    // Rediriger pour éviter la soumission multiple du formulaire
-    header('Location: ' . $_SERVER['PHP_SELF'] . '?success=1');
-    exit;
-}
-
-// Récupérer les paramètres de pagination
-$current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
-$problems_per_page = 10;
-
-// Include header
-include 'header.php';
-
-// Récupérer les favoris EXACTEMENT comme dans manage_favorites.php mais filtré
-require_once 'db_connect.php';
-
-// Initialiser les variables
-$favorites = [];
-$total_favorites = 0;
-$total_pages = 0;
-$debug_error = '';
-
-try {
-    $conn = connect();
-    if ($conn === null) {
-        throw new Exception("Impossible de se connecter à la base de données");
-    }
-    
-    // UTILISER LA MÊME REQUÊTE QUE manage_favorites.php MAIS FILTRER SEULEMENT LES FAVORIS
-    $stmt = $conn->prepare("
-        SELECT p.*, u.username, u.avatar_url,
-               (SELECT COUNT(*) FROM favorites WHERE problem_id = p.problem_id) AS favorite_count,
-               (SELECT COUNT(*) FROM favorites WHERE problem_id = p.problem_id AND user_id = ?) AS is_favorite,
-               (SELECT COUNT(*) FROM solutions WHERE problem_id = p.problem_id AND user_id = ?) AS has_solution
-        FROM problems p
-        INNER JOIN users u ON p.user_id = u.id
-        WHERE p.problem_id IN (SELECT problem_id FROM favorites WHERE user_id = ?)
-        ORDER BY p.created_at DESC
-    ");
-    $stmt->execute([$user['id'], $user['id'], $user['id']]);
-    $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Compter le total pour la pagination
-    $total_favorites = count($favorites);
-    $total_pages = ceil($total_favorites / $problems_per_page);
-    
-    // S'assurer que la page courante est valide
-    if ($current_page < 1) {
-        $current_page = 1;
-    } elseif ($current_page > $total_pages && $total_pages > 0) {
-        $current_page = $total_pages;
-    }
-    
-    // Appliquer la pagination
-    $offset = ($current_page - 1) * $problems_per_page;
-    $favorites = array_slice($favorites, $offset, $problems_per_page);
-    
-} catch (Exception $e) {
-    error_log("Erreur lors de la récupération des favoris: " . $e->getMessage());
-    $favorites = [];
-    $total_pages = 0;
-    $current_page = 1;
-    
-    if ($debug_mode) {
-        $debug_error = $e->getMessage();
-    }
-}
+// Remplacer tout le contenu HTML après include 'header.php'; par :
 ?>
 
 <h2><i class="fas fa-star"></i> Mes Favoris</h2>
@@ -243,7 +143,7 @@ Page courante: <?php echo $current_page; ?>
 Total pages: <?php echo $total_pages; ?>
         </pre>
         
-        <?php if (!empty($debug_error)): ?>
+        <?php if (isset($debug_error)): ?>
             <h5>❌ Erreur:</h5>
             <pre><?php echo htmlspecialchars($debug_error); ?></pre>
         <?php endif; ?>
@@ -251,7 +151,7 @@ Total pages: <?php echo $total_pages; ?>
         <?php
         // Test pour voir tous les favoris bruts
         try {
-            $debug_stmt = $conn->prepare("SELECT * FROM favorites WHERE user_id = ?");
+            $debug_stmt = $pdo->prepare("SELECT * FROM favorites WHERE user_id = ?");
             $debug_stmt->execute([$user['id']]);
             $raw_favorites = $debug_stmt->fetchAll(PDO::FETCH_ASSOC);
             echo '<h5>Favoris bruts dans la table favorites:</h5>';
@@ -434,7 +334,7 @@ Total pages: <?php echo $total_pages; ?>
 <?php endif; ?>
 
 <?php
-// Additional scripts
+// Remplacer la section $additional_scripts par :
 $additional_scripts = "
     // Gestion des favoris dans la page favorites
     document.querySelectorAll('.favorite-btn').forEach(btn => {

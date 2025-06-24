@@ -1,10 +1,15 @@
 <?php
 session_start();
-require_once 'verification.php';
-require_once 'db_connect.php';
+require_once '../verification.php';
+require_once '../db_connect.php';
 
-// Headers pour les réponses JSON
-header('Content-Type: application/json');
+// Vérifier que c'est une requête AJAX
+if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
+    if (!isset($_POST['problem_id'])) {
+        http_response_code(400);
+        exit('Requête invalide');
+    }
+}
 
 // Vérifier la connexion de l'utilisateur
 if (!isLoggedIn()) {
@@ -17,57 +22,41 @@ if (!isLoggedIn()) {
 $user = getCurrentUser();
 
 // Vérifier les paramètres
-if (!isset($_POST['problem_id']) || !isset($_POST['favorite_action'])) {
+if (!isset($_POST['problem_id']) || !isset($_POST['set_favorite'])) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Paramètres manquants']);
     exit;
 }
 
 $problemId = (int)$_POST['problem_id'];
-$action = $_POST['favorite_action'];
-
-// Validation de l'action
-if (!in_array($action, ['add', 'remove'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Action invalide']);
-    exit;
-}
+$setFavorite = (int)$_POST['set_favorite'];
 
 try {
     $pdo = connect();
     
-    if (!$pdo) {
-        throw new Exception("Erreur de connexion à la base de données");
-    }
-    
-    if ($action === 'add') {
+    if ($setFavorite === 1) {
         // Ajouter aux favoris (éviter les doublons)
         $stmt = $pdo->prepare("INSERT IGNORE INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, NOW())");
         $result = $stmt->execute([$user['id'], $problemId]);
-        $message = 'Ajouté aux favoris!';
+        $action = 'ajouté';
     } else {
         // Retirer des favoris
         $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND problem_id = ?");
         $result = $stmt->execute([$user['id'], $problemId]);
-        $message = 'Retiré des favoris!';
+        $action = 'retiré';
     }
     
     if ($result) {
-        // Récupérer le nouveau nombre de favoris pour ce problème
+        // Récupérer le nouveau nombre de favoris
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE problem_id = ?");
         $stmt->execute([$problemId]);
         $favoriteCount = $stmt->fetchColumn();
         
-        // Vérifier si l'utilisateur actuel a ce problème en favori
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE problem_id = ? AND user_id = ?");
-        $stmt->execute([$problemId, $user['id']]);
-        $isFavorite = $stmt->fetchColumn() > 0;
-        
         echo json_encode([
             'success' => true, 
-            'message' => $message,
-            'favorite_count' => (int)$favoriteCount,
-            'is_favorite' => $isFavorite
+            'message' => 'Favori ' . $action . ' avec succès',
+            'favorite_count' => $favoriteCount,
+            'is_favorite' => $setFavorite === 1
         ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour']);

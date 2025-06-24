@@ -664,6 +664,4 @@ $additional_scripts = "
     " : "") . "
 ";
 
-// Include footer
-include 'footer.php';
-?>
+// Include

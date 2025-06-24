@@ -3,7 +3,7 @@ session_start();
 require_once 'verification.php';
 require_once 'db_connect.php';
 
-// Headers pour les réponses JSON
+// Headers pour les réponses JSON et formulaires
 header('Content-Type: application/json');
 
 // Vérifier la connexion de l'utilisateur
@@ -33,21 +33,16 @@ if ($problemId <= 0) {
 }
 
 try {
-    // Utiliser la même connexion que dans exacueil.php
-    $conn = connect();
-    if ($conn === null) {
-        throw new Exception("Impossible de se connecter à la base de données");
-    }
+    $pdo = connect();
     
     if ($action === 'add') {
         // Vérifier si le favori existe déjà
-        $stmt = $conn->prepare("SELECT COUNT(*) as count_fav FROM favorites WHERE user_id = ? AND problem_id = ?");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE user_id = ? AND problem_id = ?");
         $stmt->execute([$user['id'], $problemId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        if ($result['count_fav'] == 0) {
-            // Ajouter aux favoris - SQL Server utilise GETDATE() au lieu de NOW()
-            $stmt = $conn->prepare("INSERT INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, GETDATE())");
+        if ($stmt->fetchColumn() == 0) {
+            // Ajouter aux favoris
+            $stmt = $pdo->prepare("INSERT INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, NOW())");
             $stmt->execute([$user['id'], $problemId]);
             
             echo json_encode(['success' => true, 'message' => 'Ajouté aux favoris', 'action' => 'added']);
@@ -57,7 +52,7 @@ try {
         
     } elseif ($action === 'remove') {
         // Retirer des favoris
-        $stmt = $conn->prepare("DELETE FROM favorites WHERE user_id = ? AND problem_id = ?");
+        $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND problem_id = ?");
         $stmt->execute([$user['id'], $problemId]);
         
         echo json_encode(['success' => true, 'message' => 'Retiré des favoris', 'action' => 'removed']);
@@ -68,19 +63,8 @@ try {
     }
     
 } catch (Exception $e) {
-    // Log l'erreur pour le débogage
     error_log("Erreur dans manage_favorites.php: " . $e->getMessage());
-    error_log("User ID: " . $user['id'] . ", Problem ID: " . $problemId . ", Action: " . $action);
-    
     http_response_code(500);
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Erreur serveur: ' . $e->getMessage(),
-        'debug' => [
-            'user_id' => $user['id'],
-            'problem_id' => $problemId,
-            'action' => $action
-        ]
-    ]);
+    echo json_encode(['success' => false, 'message' => 'Erreur serveur']);
 }
 ?>

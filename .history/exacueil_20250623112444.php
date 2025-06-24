@@ -92,7 +92,7 @@ $user = getCurrentUser();
 $_SESSION['success_message'] = $_SESSION['success_message'] ?? '';
 $_SESSION['error_message'] = $_SESSION['error_message'] ?? '';
 
-// Récupérer les publications EXACTEMENT comme dans manage_favorites.php
+// Récupérer les publications avec la même requête que favorites.php
 try {
     $stmt = $conn->prepare("
         SELECT p.*, u.username, u.avatar_url,
@@ -164,7 +164,7 @@ include 'header.php';
             <div class="publication-stats">
                 <span><i class="fas fa-code"></i> <?= htmlspecialchars(ucfirst($pub['language'])) ?></span>
                 <span><i class="fas fa-check-circle"></i> <?= htmlspecialchars($pub['solution_count']??0) ?> résolutions</span>
-                <span><i class="fas fa-heart"></i> <?= htmlspecialchars($pub['favorite_count']) ?> favoris</span>
+                <span class="favorite-count"><i class="fas fa-heart"></i> <?= htmlspecialchars($pub['favorite_count']) ?> favoris</span>
             </div>
             
             <div class="action-buttons">
@@ -176,6 +176,9 @@ include 'header.php';
                    class="btn btn-success">
                     <i class="fas fa-paper-plane"></i> Soumettre
                 </a>
+                <a href="favorites.php" class="btn" style="background: #6f42c1; color: white;">
+                    <i class="fas fa-star"></i> Mes Favoris
+                </a>
             </div>
         </div>
     </div>
@@ -183,9 +186,9 @@ include 'header.php';
 </div>
 
 <?php
-// Ajout du script spécifique pour cette page
+// Script JavaScript corrigé pour utiliser toggle_favorite.php
 $additional_scripts = "
-    // Gestion des favoris - VERSION CORRIGÉE
+    // Gestion des favoris - VERSION FINALE
     document.querySelectorAll('.favorite-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -193,6 +196,8 @@ $additional_scripts = "
             const problemId = this.dataset.problemId;
             const isCurrentlyActive = this.classList.contains('active');
             const heartIcon = this.querySelector('i');
+            const card = this.closest('.publication-card');
+            const favoriteCountSpan = card.querySelector('.favorite-count');
             
             // Désactiver le bouton pendant la requête
             this.disabled = true;
@@ -204,50 +209,45 @@ $additional_scripts = "
             formData.append('problem_id', problemId);
             formData.append('favorite_action', isCurrentlyActive ? 'remove' : 'add');
             
-            // Envoyer la requête vers manage_favorites.php
-            fetch('manage_favorites.php', {
+            // Envoyer la requête vers toggle_favorite.php
+            fetch('toggle_favorite.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur HTTP: ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // Succès - changer l'état du bouton
-                    if (data.action === 'removed') {
+                    if (isCurrentlyActive) {
                         // Retirer des favoris
                         this.classList.remove('active');
                         this.title = 'Ajouter aux favoris';
-                        
-                        // Décrémenter le compteur de favoris
-                        const statsSpan = this.closest('.publication-card').querySelector('.publication-stats span:last-child');
-                        if (statsSpan) {
-                            const currentCount = parseInt(statsSpan.textContent.match(/\\d+/)[0]);
-                            statsSpan.innerHTML = '<i class=\"fas fa-heart\"></i> ' + Math.max(0, currentCount - 1) + ' favoris';
-                        }
-                        
                         showMessage('Retiré des favoris!', 'info');
-                    } else if (data.action === 'added') {
+                    } else {
                         // Ajouter aux favoris
                         this.classList.add('active');
                         this.title = 'Retirer des favoris';
-                        
-                        // Incrémenter le compteur de favoris
-                        const statsSpan = this.closest('.publication-card').querySelector('.publication-stats span:last-child');
-                        if (statsSpan) {
-                            const currentCount = parseInt(statsSpan.textContent.match(/\\d+/)[0]);
-                            statsSpan.innerHTML = '<i class=\"fas fa-heart\"></i> ' + (currentCount + 1) + ' favoris';
-                        }
-                        
                         showMessage('Ajouté aux favoris!', 'success');
                     }
                     
-                    // Animation
+                                       // Mettre à jour le compteur de favoris
+                    if (favoriteCountSpan) {
+                        favoriteCountSpan.innerHTML = '<i class=\"fas fa-heart\"></i> ' + data.favorite_count + ' favoris';
+                    }
+                    
+                    // Animation de succès
                     heartIcon.style.transform = 'scale(1.3)';
                     setTimeout(() => {
                         heartIcon.style.transform = '';
-                    }, 200);
+                    }, 300);
+                    
                 } else {
-                    throw new Error(data.message || 'Erreur serveur');
+                    throw new Error(data.message || 'Erreur inconnue');
                 }
             })
             .catch(error => {
@@ -275,6 +275,7 @@ $additional_scripts = "
         messageDiv.style.maxWidth = '300px';
         messageDiv.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
         messageDiv.style.transition = 'opacity 0.3s ease';
+        messageDiv.style.fontWeight = 'bold';
         
         switch(type) {
             case 'success':
@@ -300,7 +301,8 @@ $additional_scripts = "
         document.body.appendChild(messageDiv);
         
         // Supprimer le message après 3 secondes
-        setTimeout(() => {            messageDiv.style.opacity = '0';
+        setTimeout(() => {
+            messageDiv.style.opacity = '0';
             setTimeout(() => {
                 if (messageDiv.parentNode) {
                     messageDiv.parentNode.removeChild(messageDiv);
@@ -309,15 +311,7 @@ $additional_scripts = "
         }, 3000);
     }
     
-    // Animation des cartes
-    document.querySelectorAll('.publication-card').forEach(card => {
-        card.addEventListener('mouseenter', () => 
-            card.style.boxShadow = '0 3px 10px rgba(0,0,0,0.1)');
-        card.addEventListener('mouseleave', () => 
-            card.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)');
-    });
-    
-    // Animation d'apparition des cartes
+    // Animation des cartes au chargement
     document.addEventListener('DOMContentLoaded', function() {
         const cards = document.querySelectorAll('.publication-card');
         cards.forEach((card, index) => {
@@ -331,14 +325,40 @@ $additional_scripts = "
         });
     });
     
+    // Animation hover des cartes
+    document.querySelectorAll('.publication-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-2px)';
+            card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)';
+        });
+    });
+    
     // Gestion des erreurs de chargement d'images
     document.addEventListener('DOMContentLoaded', function() {
         const avatars = document.querySelectorAll('.author-avatar');
         avatars.forEach(avatar => {
             avatar.addEventListener('error', function() {
                 this.src = 'default.png';
+                this.alt = 'Avatar par défaut';
             });
         });
+    });
+    
+    // Fonction pour actualiser la page
+    function refreshPage() {
+        window.location.reload();
+    }
+    
+    // Raccourci clavier pour actualiser (Ctrl+R ou F5)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey && e.key === 'r') || e.key === 'F5') {
+            e.preventDefault();
+            refreshPage();
+        }
     });
 ";
 
@@ -355,6 +375,9 @@ include 'footer.php';
             indicator.classList.remove('not-submitted');
             indicator.classList.add('submitted');
         });
+        
+        // Message de succès pour la soumission
+        showMessage('Solution soumise avec succès!', 'success');
     });
 </script>
 <?php 

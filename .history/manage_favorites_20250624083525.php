@@ -33,21 +33,21 @@ if ($problemId <= 0) {
 }
 
 try {
-    // Utiliser la même connexion que dans exacueil.php
-    $conn = connect();
-    if ($conn === null) {
-        throw new Exception("Impossible de se connecter à la base de données");
+    // Utiliser la même variable $pdo que dans favorites.php
+    // Vérifier d'abord si $pdo existe, sinon créer la connexion
+    if (!isset($pdo)) {
+        $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8", DB_USER, DB_PASS);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     
     if ($action === 'add') {
         // Vérifier si le favori existe déjà
-        $stmt = $conn->prepare("SELECT COUNT(*) as count_fav FROM favorites WHERE user_id = ? AND problem_id = ?");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE user_id = ? AND problem_id = ?");
         $stmt->execute([$user['id'], $problemId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        if ($result['count_fav'] == 0) {
-            // Ajouter aux favoris - SQL Server utilise GETDATE() au lieu de NOW()
-            $stmt = $conn->prepare("INSERT INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, GETDATE())");
+        if ($stmt->fetchColumn() == 0) {
+            // Ajouter aux favoris
+            $stmt = $pdo->prepare("INSERT INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, NOW())");
             $stmt->execute([$user['id'], $problemId]);
             
             echo json_encode(['success' => true, 'message' => 'Ajouté aux favoris', 'action' => 'added']);
@@ -57,7 +57,7 @@ try {
         
     } elseif ($action === 'remove') {
         // Retirer des favoris
-        $stmt = $conn->prepare("DELETE FROM favorites WHERE user_id = ? AND problem_id = ?");
+        $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND problem_id = ?");
         $stmt->execute([$user['id'], $problemId]);
         
         echo json_encode(['success' => true, 'message' => 'Retiré des favoris', 'action' => 'removed']);
