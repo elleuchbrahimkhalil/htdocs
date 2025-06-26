@@ -2,7 +2,7 @@
     "cmake.sourceDirectory": "C:/xampp/htdocs/portfolio/wp-content/themes/bard",
     "fiveServer.injectBody": true,
     "fiveServer.highlight": true,
-    "php.version": "8.3",
+    "php.version": "8.4",
     "editor.defaultFormatter": "GitHub.copilot",
     "[php]": {
         "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"

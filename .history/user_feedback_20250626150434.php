@@ -1,188 +1,8 @@
 <?php
-// ===== TRAITEMENT POST EN PREMIER (AVANT TOUT AFFICHAGE) =====
-
-// Démarrer la session
+// Démarrer la session si elle n'est pas déjà active
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-// Inclure les fichiers nécessaires
-require_once 'verification.php';
-
-// Vérifier la connexion
-if (!isLoggedIn()) {
-    header('Location: exlogin.php');
-    exit;
-}
-
-$user_id = $_SESSION['user_id'] ?? null;
-if (!$user_id) {
-    header('Location: exlogin.php');
-    exit;
-}
-
-// ===== TRAITEMENT DES ACTIONS POST (AVANT TOUT HTML) =====
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-    // Nettoyer le buffer de sortie
-    if (ob_get_level()) {
-        ob_clean();
-    }
-    
-    try {
-        require_once 'db_connect.php';
-        $pdo = connect();
-        
-        if (!$pdo) {
-            throw new Exception("Impossible de se connecter à la base de données");
-        }
-        
-        // ===== ACCEPTATION DE SOLUTION =====
-        if (isset($_POST['accept_solution'])) {
-            $solution_id = isset($_POST['solution_id']) ? (int)$_POST['solution_id'] : 0;
-            
-            if ($solution_id > 0) {
-                // Vérifier que la solution existe
-                $stmt = $pdo->prepare("
-                    SELECT s.*, p.user_id as problem_owner, p.points
-                    FROM solutions s
-                    INNER JOIN problems p ON s.problem_id = p.problem_id
-                    WHERE s.id = ? AND p.user_id = ?
-                ");
-                
-                $stmt->execute([$solution_id, $user_id]);
-                $solution = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                if ($solution) {
-                    $current_status = strtolower($solution['status']);
-                    
-                    if ($current_status === 'pending') {
-                        $pdo->beginTransaction();
-                        
-                        try {
-                            // Mettre à jour le statut
-                            $stmt = $pdo->prepare("
-                                UPDATE solutions
-                                SET status = 'Accepted', evaluated_at = GETDATE()
-                                WHERE id = ?
-                            ");
-                            
-                            $result = $stmt->execute([$solution_id]);
-                            
-                            if ($result && $stmt->rowCount() > 0) {
-                                // Mettre à jour les points
-                                $stmt = $pdo->prepare("
-                                    UPDATE users
-                                    SET score = score + ?, problems_solved = problems_solved + 1
-                                    WHERE id = ?
-                                ");
-                                $stmt->execute([$solution['points'], $solution['user_id']]);
-                                
-                                $pdo->commit();
-                                
-                                // ===== REDIRECTION GARANTIE (PAS DE HTML AVANT) =====
-                                $_SESSION['payment_message'] = "Solution acceptée avec succès !";
-                                $_SESSION['payment_solution_id'] = $solution_id;
-                                
-                                header("Location: payment.php?solution_id=$solution_id&from=accept");
-                                exit; // ARRÊT COMPLET ICI
-                                
-                            } else {
-                                $pdo->rollback();
-                                $_SESSION['error_message'] = "Impossible de mettre à jour le statut de la solution.";
-                            }
-                            
-                        } catch (Exception $e) {
-                            $pdo->rollback();
-                            $_SESSION['error_message'] = "Erreur lors de la transaction: " . $e->getMessage();
-                            error_log("Erreur transaction acceptation: " . $e->getMessage());
-                        }
-                        
-                    } else {
-                        $_SESSION['error_message'] = "Cette solution a déjà été évaluée (statut: " . $solution['status'] . ").";
-                    }
-                } else {
-                    $_SESSION['error_message'] = "Solution introuvable ou non autorisée.";
-                }
-            } else {
-                $_SESSION['error_message'] = "ID de solution invalide.";
-            }
-            
-            // Redirection après erreur
-            $filter = $_POST['filter'] ?? 'all';
-            $page = $_POST['page'] ?? 1;
-            header("Location: " . $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page");
-            exit;
-        }
-        
-        // ===== REJET DE SOLUTION =====
-        if (isset($_POST['reject_solution'])) {
-            $solution_id = isset($_POST['solution_id']) ? (int)$_POST['solution_id'] : 0;
-            
-            if ($solution_id > 0) {
-                $stmt = $pdo->prepare("
-                    SELECT s.*, p.user_id as problem_owner
-                    FROM solutions s
-                    INNER JOIN problems p ON s.problem_id = p.problem_id
-                    WHERE s.id = ? AND p.user_id = ?
-                ");
-                
-                $stmt->execute([$solution_id, $user_id]);
-                $solution = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                if ($solution) {
-                    $current_status = strtolower($solution['status']);
-                    
-                    if ($current_status === 'pending') {
-                        $stmt = $pdo->prepare("
-                            UPDATE solutions
-                            SET status = 'Rejected', evaluated_at = GETDATE()
-                            WHERE id = ?
-                        ");
-                        
-                        $result = $stmt->execute([$solution_id]);
-                        
-                        if ($result) {
-                            $_SESSION['success_message'] = "La solution a été rejetée avec succès.";
-                        } else {
-                            $_SESSION['error_message'] = "Erreur lors du rejet de la solution.";
-                        }
-                    } else {
-                        $_SESSION['error_message'] = "Cette solution a déjà été évaluée.";
-                    }
-                } else {
-                    $_SESSION['error_message'] = "Solution introuvable.";
-                }
-            } else {
-                $_SESSION['error_message'] = "ID de solution invalide.";
-            }
-            
-            // Redirection après rejet
-            $filter = $_POST['filter'] ?? 'all';
-            $page = $_POST['page'] ?? 1;
-            header("Location: " . $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page");
-            exit;
-        }
-        
-    } catch (Exception $e) {
-        $_SESSION['error_message'] = "Erreur: " . $e->getMessage();
-        error_log("Erreur POST user_feedback.php: " . $e->getMessage());
-        
-        $filter = $_POST['filter'] ?? 'all';
-        $page = $_POST['page'] ?? 1;
-        header("Location: " . $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page");
-        exit;
-    }
-}
-
-// ===== RÉCUPÉRATION DES MESSAGES DEPUIS LA SESSION =====
-$success_message = $_SESSION['success_message'] ?? '';
-$error_message = $_SESSION['error_message'] ?? '';
-
-// Nettoyer les messages de la session après récupération
-unset($_SESSION['success_message'], $_SESSION['error_message']);
-
-// ===== MAINTENANT ON PEUT COMMENCER L'AFFICHAGE =====
 
 // Set page title
 $page_title = "Notifications des Problèmes";
@@ -251,6 +71,7 @@ $additional_css = "
         border: 1px solid #e0e0e0;
         max-height: 300px;
         overflow-y: auto;
+        position: relative;
     }
 
     .solution-explanation {
@@ -338,6 +159,12 @@ $additional_css = "
         color: white;
     }
 
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
     .empty-state {
         text-align: center;
         padding: 40px 20px;
@@ -406,6 +233,24 @@ $additional_css = "
         font-size: 14px;
     }
 
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 8px;
+        font-size: 12px;
+        opacity: 0.7;
+        z-index: 10;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+
+    .copy-btn:hover {
+        opacity: 1;
+        background: #f8f9fa;
+    }
+
     .alert {
         padding: 15px;
         margin-bottom: 20px;
@@ -424,40 +269,30 @@ $additional_css = "
         background-color: #f8d7da;
         border-color: #f5c6cb;
     }
-
-    .status-indicator {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        margin-right: 5px;
-    }
-
-    .status-indicator.pending {
-        background-color: #f39c12;
-        animation: pulse 2s infinite;
-    }
-
-    .status-indicator.accepted {
-        background-color: #27ae60;
-    }
-
-    .status-indicator.rejected {
-        background-color: #e74c3c;
-    }
-
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
 ";
 
 // Include header
 include 'header.php';
 
+// Vérifier si l'utilisateur est connecté
+if (!isLoggedIn()) {
+    header('Location: exlogin.php');
+    exit;
+}
+
+// Récupérer l'ID de l'utilisateur connecté
+$user_id = $_SESSION['user_id'] ?? null;
+
+if (!$user_id) {
+    echo '<div class="alert alert-danger">Erreur: ID utilisateur non trouvé dans la session.</div>';
+    include 'footer.php';
+    exit;
+}
+
 // Initialiser les variables
 $received_solutions = [];
+$error_message = '';
+$success_message = '';
 $debug_info = [];
 
 // Paramètres de filtrage et pagination
@@ -470,6 +305,11 @@ $total_pages = 0;
 
 // Mode debug
 $debug_mode = isset($_GET['debug']) && $_GET['debug'] == '1';
+
+// Gestion du message de succès pour le rejet
+if (isset($_GET['success']) && $_GET['success'] === 'rejected') {
+    $success_message = "La solution a été rejetée avec succès.";
+}
 
 try {
     // Inclure le fichier de connexion
@@ -503,14 +343,14 @@ try {
         $params = [$user_id, $user_id];
         
         if ($filter !== 'all') {
-            $where_clause .= " AND LOWER(s.status) = ?";
-            $params[] = strtolower($filter);
+            $where_clause .= " AND s.status = ?";
+            $params[] = $filter;
         }
         
         $debug_info[] = "🔍 Clause WHERE: $where_clause";
         $debug_info[] = "📊 Paramètres: " . implode(', ', $params);
         
-        // Compter le total pour la pagination
+        // Compter le total pour la pagination - SQL Server
         $count_query = "
             SELECT COUNT(*) as total
             FROM solutions s
@@ -572,52 +412,38 @@ try {
             if (empty($received_solutions) && $total_count > 0) {
                 $debug_info[] = "⚠️ OFFSET/FETCH n'a pas fonctionné, essai avec méthode alternative";
                 
-                // Méthode alternative: LIMIT/OFFSET classique
-                $simple_query = "
-                    SELECT 
-                        s.id,
-                        s.problem_id,
-                        s.user_id,
-                        s.solution_code,
-                        s.explanation,
-                        s.status,
-                        s.created_at,
-                        s.evaluated_at,
-                        s.price_id,
-                        p.title as problem_title,
-                        p.points,
-                        u.username,
-                        u.name as solver_name,
-                        pr.amount as price,
-                        pr.currency
-                    FROM solutions s
-                    INNER JOIN problems p ON s.problem_id = p.problem_id
-                    INNER JOIN users u ON s.user_id = u.id
-                    LEFT JOIN prices pr ON s.price_id = pr.price_id
-                    $where_clause
-                    ORDER BY s.created_at DESC
-                    LIMIT $per_page OFFSET $offset
-                ";
-                
-                $debug_info[] = "🔍 Requête simple: " . str_replace("\n", " ", $simple_query);
-                
-                try {
+                if ($total_count <= 1000) {
+                    $simple_query = "
+                        SELECT 
+                            s.id,
+                            s.problem_id,
+                            s.user_id,
+                            s.solution_code,
+                            s.explanation,
+                            s.status,
+                            s.created_at,
+                            s.evaluated_at,
+                            s.price_id,
+                            p.title as problem_title,
+                            p.points,
+                            u.username,
+                            u.name as solver_name,
+                            pr.amount as price,
+                            pr.currency
+                        FROM solutions s
+                        INNER JOIN problems p ON s.problem_id = p.problem_id
+                        INNER JOIN users u ON s.user_id = u.id
+                        LEFT JOIN prices pr ON s.price_id = pr.price_id
+                        $where_clause
+                        ORDER BY s.created_at DESC
+                    ";
+                    
                     $stmt = $pdo->prepare($simple_query);
                     $stmt->execute($params);
-                    $received_solutions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    $debug_info[] = "✅ Solutions récupérées avec LIMIT/OFFSET: " . count($received_solutions);
-                } catch (Exception $e) {
-                    $debug_info[] = "❌ LIMIT/OFFSET échoué aussi: " . $e->getMessage();
+                    $all_solutions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     
-                    // Dernière méthode: récupérer tout et utiliser array_slice
-                    if ($total_count <= 1000) {
-                        $all_query = str_replace("ORDER BY s.created_at DESC LIMIT $per_page OFFSET $offset", "ORDER BY s.created_at DESC", $simple_query);
-                        $stmt = $pdo->prepare($all_query);
-                        $stmt->execute($params);
-                        $all_solutions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        $received_solutions = array_slice($all_solutions, $offset, $per_page);
-                        $debug_info[] = "✅ Solutions récupérées avec array_slice: " . count($received_solutions);
-                    }
+                    $received_solutions = array_slice($all_solutions, $offset, $per_page);
+                    $debug_info[] = "✅ Solutions récupérées avec méthode alternative: " . count($received_solutions);
                 }
             }
         } else {
@@ -634,6 +460,129 @@ try {
     $error_message = "Erreur: " . $e->getMessage();
     $debug_info[] = "❌ Erreur générale: " . $e->getMessage();
     error_log("Erreur dans user_feedback.php: " . $e->getMessage());
+}
+
+// Traitement des actions POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($pdo)) {
+    try {
+        if (isset($_POST['accept_solution'])) {
+            $solution_id = isset($_POST['solution_id']) ? (int)$_POST['solution_id'] : 0;
+            
+            if ($solution_id > 0) {
+                // Vérifier que la solution existe et appartient à un problème de l'utilisateur
+                $stmt = $pdo->prepare("
+                    SELECT s.*, p.user_id as problem_owner, p.points
+                    FROM solutions s
+                    INNER JOIN problems p ON s.problem_id = p.problem_id
+                    WHERE s.id = ? AND p.user_id = ?
+                ");
+                
+                $stmt->execute([$solution_id, $user_id]);
+                $solution = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($solution) {
+                    if ($solution['status'] === 'pending') {
+                        // Commencer une transaction
+                        $pdo->beginTransaction();
+                        
+                        try {
+                            // Mettre à jour le statut de la solution
+                            $stmt = $pdo->prepare("
+                                UPDATE solutions
+                                SET status = 'accepted', evaluated_at = GETDATE()
+                                WHERE id = ?
+                            ");
+                            
+                            $result = $stmt->execute([$solution_id]);
+                            
+                            if ($result && $stmt->rowCount() > 0) {
+                                // Mettre à jour les points de l'utilisateur qui a soumis la solution
+                                $stmt = $pdo->prepare("
+                                    UPDATE users
+                                    SET score = score + ?, problems_solved = problems_solved + 1
+                                    WHERE id = ?
+                                ");
+                                $stmt->execute([$solution['points'], $solution['user_id']]);
+                                
+                                // Confirmer la transaction
+                                $pdo->commit();
+                                
+                                // Redirection immédiate vers la page de paiement
+                                header("Location: payment.php?solution_id=$solution_id");
+                                exit;
+                            } else {
+                                $pdo->rollback();
+                                $error_message = "Aucune ligne n'a été mise à jour. La solution a peut-être déjà été traitée.";
+                            }
+                        } catch (Exception $e) {
+                            $pdo->rollback();
+                            $error_message = "Erreur lors de la transaction: " . $e->getMessage();
+                            error_log("Erreur transaction acceptation: " . $e->getMessage());
+                        }
+                    } else {
+                        $error_message = "Cette solution a déjà été évaluée.";
+                    }
+                } else {
+                    $error_message = "Solution introuvable ou vous n'êtes pas autorisé à l'accepter.";
+                }
+            } else {
+                $error_message = "ID de solution invalide.";
+            }
+        }
+        
+        if (isset($_POST['reject_solution'])) {
+            $solution_id = isset($_POST['solution_id']) ? (int)$_POST['solution_id'] : 0;
+            
+            if ($solution_id > 0) {
+                // Vérifier que la solution existe et appartient à un problème de l'utilisateur
+                $stmt = $pdo->prepare("
+                    SELECT s.*, p.user_id as problem_owner
+                    FROM solutions s
+                    INNER JOIN problems p ON s.problem_id = p.problem_id
+                    WHERE s.id = ? AND p.user_id = ?
+                ");
+                
+                $stmt->execute([$solution_id, $user_id]);
+                $solution = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($solution) {
+                    if ($solution['status'] === 'pending') {
+                        // Mettre à jour le statut de la solution
+                        $stmt = $pdo->prepare("
+                            UPDATE solutions
+                            SET status = 'rejected', evaluated_at = GETDATE()
+                            WHERE id = ?
+                        ");
+                        
+                        $result = $stmt->execute([$solution_id]);
+                        
+                        if ($result) {
+                            // Redirection immédiate avec message de succès
+                            header("Location: " . $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page" . ($debug_mode ? "&debug=1" : "") . "&success=rejected");
+                            exit;
+                        } else {
+                            $error_message = "Une erreur est survenue lors du rejet de la solution.";
+                        }
+                    } else {
+                        $error_message = "Cette solution a déjà été évaluée.";
+                    }
+                } else {
+                    $error_message = "Solution introuvable ou vous n'êtes pas autorisé à la rejeter.";
+                }
+            } else {
+                $error_message = "ID de solution invalide.";
+            }
+        }
+        
+    } catch (PDOException $e) {
+        $error_message = "Erreur lors du traitement: " . $e->getMessage();
+        $debug_info[] = "❌ Erreur PDO lors du traitement POST: " . $e->getMessage();
+        error_log("Erreur PDO lors du traitement POST dans user_feedback.php: " . $e->getMessage());
+    } catch (Exception $e) {
+        $error_message = "Erreur lors du traitement: " . $e->getMessage();
+        $debug_info[] = "❌ Erreur lors du traitement POST: " . $e->getMessage();
+        error_log("Erreur lors du traitement POST dans user_feedback.php: " . $e->getMessage());
+    }
 }
 ?>
 
@@ -748,23 +697,26 @@ try {
                     }
                     ?>
                 </span>
-                <?php 
-                $current_status = strtolower($solution['status'] ?? 'pending');
-                $status_labels = [
-                    'pending' => 'En attente',
-                    'accepted' => 'Acceptée',
-                    'rejected' => 'Rejetée'
-                ];
-                $status_label = $status_labels[$current_status] ?? htmlspecialchars($solution['status']);
-                ?>
-                <span class="solution-status <?php echo $current_status; ?>">
-                    <span class="status-indicator <?php echo $current_status; ?>"></span>
-                    <?php echo $status_label; ?>
+                <span class="solution-status <?php echo htmlspecialchars($solution['status'] ?? 'pending'); ?>">
+                    <?php 
+                    $status_labels = [
+                        'pending' => 'En attente',
+                        'accepted' => 'Acceptée',
+                        'rejected' => 'Rejetée'
+                    ];
+                    $current_status = $solution['status'] ?? 'pending';
+                    echo isset($status_labels[$current_status]) ? 
+                        $status_labels[$current_status] : 
+                        htmlspecialchars($current_status);
+                    ?>
                 </span>
             </div>
             
             <div class="solution-content">
                 <pre><?php echo htmlspecialchars($solution['solution_code'] ?? 'Code non disponible'); ?></pre>
+                <button class="copy-btn" onclick="copyToClipboard(this.parentElement.querySelector('pre').textContent)" title="Copier le code">
+                    <i class="fas fa-copy"></i>
+                </button>
             </div>
             
             <?php if (!empty($solution['explanation'])): ?>
@@ -779,47 +731,29 @@ try {
                     <i class="fas fa-eye"></i> Voir le problème
                 </a>
                 
-                <?php if ($current_status === 'pending'): ?>
+                <?php if (($solution['status'] ?? 'pending') === 'pending'): ?>
                     <div class="solution-actions">
                         <form method="POST" action="" style="display: inline;" id="accept-form-<?php echo $solution['id']; ?>">
                             <input type="hidden" name="solution_id" value="<?php echo $solution['id']; ?>">
-                            <input type="hidden" name="filter" value="<?php echo htmlspecialchars($filter); ?>">
-                            <input type="hidden" name="page" value="<?php echo $page; ?>">
-                            <button type="button" 
-                                    onclick="confirmAndSubmitAccept(<?php echo $solution['id']; ?>, '<?php echo addslashes($solution['problem_title'] ?? ''); ?>', '<?php echo number_format($solution['price'] ?? 0, 2); ?>')" 
-                                    class="btn btn-primary">
+                            <button type="button" onclick="confirmAndSubmitAccept(<?php echo $solution['id']; ?>, '<?php echo addslashes($solution['problem_title'] ?? ''); ?>', '<?php echo number_format($solution['price'] ?? 0, 2); ?>')" class="btn btn-primary">
                                 <i class="fas fa-check"></i> Accepter (<?php echo number_format($solution['price'] ?? 0, 2); ?> €)
                             </button>
                         </form>
                         
                         <form method="POST" action="" style="display: inline;" id="reject-form-<?php echo $solution['id']; ?>">
                             <input type="hidden" name="solution_id" value="<?php echo $solution['id']; ?>">
-                            <input type="hidden" name="filter" value="<?php echo htmlspecialchars($filter); ?>">
-                            <input type="hidden" name="page" value="<?php echo $page; ?>">
-                            <button type="button" 
-                                    onclick="confirmAndSubmitReject(<?php echo $solution['id']; ?>, '<?php echo addslashes($solution['problem_title'] ?? ''); ?>')" 
-                                    class="btn btn-outline">
+                            <button type="button" onclick="confirmAndSubmitReject(<?php echo $solution['id']; ?>, '<?php echo addslashes($solution['problem_title'] ?? ''); ?>')" class="btn btn-outline">
                                 <i class="fas fa-times"></i> Rejeter
                             </button>
                         </form>
                     </div>
-                <?php elseif ($current_status === 'accepted'): ?>
+                              <?php elseif (($solution['status'] ?? '') === 'accepted'): ?>
                     <a href="payment.php?solution_id=<?php echo $solution['id']; ?>" class="btn btn-primary">
                         <i class="fas fa-credit-card"></i> Procéder au paiement
                     </a>
-                <?php elseif ($current_status === 'rejected'): ?>
+                <?php elseif (($solution['status'] ?? '') === 'rejected'): ?>
                     <span class="btn" style="background-color: #f8d7da; color: #721c24; cursor: default;">
                         <i class="fas fa-times-circle"></i> Solution rejetée
-                        <?php if (!empty($solution['evaluated_at'])): ?>
-                            <?php 
-                            try {
-                                $eval_date = new DateTime($solution['evaluated_at']);
-                                echo ' le ' . $eval_date->format('d/m/Y');
-                            } catch (Exception $e) {
-                                // Ignorer l'erreur de date
-                            }
-                            ?>
-                        <?php endif; ?>
                     </span>
                 <?php endif; ?>
             </div>
@@ -867,8 +801,7 @@ try {
 <?php endif; ?>
 
 <script>
-// ===== FONCTIONS DE CONFIRMATION ET SOUMISSION =====
-
+// Nouvelles fonctions de confirmation et soumission
 function confirmAndSubmitAccept(solutionId, problemTitle, price) {
     const message = 'Accepter cette solution ?\n\n' +
                    '📝 Problème: ' + problemTitle + '\n' +
@@ -876,19 +809,18 @@ function confirmAndSubmitAccept(solutionId, problemTitle, price) {
                    '⚠️ Vous serez redirigé vers la page de paiement après confirmation.';
     
     if (confirm(message)) {
+        // Ajouter le champ accept_solution au formulaire
         const form = document.getElementById('accept-form-' + solutionId);
-        const button = form.querySelector('button');
-        
-        // Désactiver le bouton et changer le texte
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
-        
-        // Ajouter le champ accept_solution
         const acceptInput = document.createElement('input');
         acceptInput.type = 'hidden';
         acceptInput.name = 'accept_solution';
         acceptInput.value = '1';
         form.appendChild(acceptInput);
+        
+        // Désactiver le bouton pour éviter les doubles clics
+        const button = form.querySelector('button');
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
         
         // Soumettre le formulaire
         form.submit();
@@ -901,26 +833,47 @@ function confirmAndSubmitReject(solutionId, problemTitle) {
                    '⚠️ Cette action est définitive et ne peut pas être annulée.';
     
     if (confirm(message)) {
+        // Ajouter le champ reject_solution au formulaire
         const form = document.getElementById('reject-form-' + solutionId);
-        const button = form.querySelector('button');
-        
-        // Désactiver le bouton et changer le texte
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
-        
-        // Ajouter le champ reject_solution
         const rejectInput = document.createElement('input');
         rejectInput.type = 'hidden';
         rejectInput.name = 'reject_solution';
         rejectInput.value = '1';
         form.appendChild(rejectInput);
         
+        // Désactiver le bouton pour éviter les doubles clics
+        const button = form.querySelector('button');
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+        
         // Soumettre le formulaire
         form.submit();
     }
 }
 
-// ===== FONCTIONS UTILITAIRES =====
+// Fonction pour copier du texte dans le presse-papiers
+function copyToClipboard(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Code copié dans le presse-papiers', 'success', 2000);
+        }).catch(() => {
+            showToast('Erreur lors de la copie', 'error', 3000);
+        });
+    } else {
+        // Fallback pour les navigateurs plus anciens
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showToast('Code copié dans le presse-papiers', 'success', 2000);
+        } catch (err) {
+            showToast('Erreur lors de la copie', 'error', 3000);
+        }
+        document.body.removeChild(textArea);
+    }
+}
 
 // Fonction pour afficher des notifications toast
 function showToast(message, type = 'info', duration = 5000) {
@@ -987,242 +940,188 @@ function showToast(message, type = 'info', duration = 5000) {
     });
 }
 
-// ===== ANIMATIONS ET INTERACTIONS =====
-
+// Animation pour les boutons
 document.addEventListener('DOMContentLoaded', function() {
-    // Animation pour les boutons
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            if (!button.disabled && button.style.cursor !== 'default') {
-                button.style.transform = 'translateY(-2px)';
-                button.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            }
-        });
-        
-        button.addEventListener('mouseleave', () => {
-            if (!button.disabled && button.style.cursor !== 'default') {
-                button.style.transform = '';
-                button.style.boxShadow = '';
-            }
-        });
-    });
-    
-    // Animation pour les cartes
+    // Animation d'apparition des cartes
     const cards = document.querySelectorAll('.solution-card');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-        
         setTimeout(() => {
             card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
         }, index * 100);
-        
-        // Hover effect pour les cartes
-        card.addEventListener('mouseenter', () => {
-            card.style.transform = 'translateY(-5px)';
-            card.style.boxShadow = '0 8px 15px rgba(0,0,0,0.1)';
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'translateY(-3px)';
-            card.style.boxShadow = '0 5px 15px rgba(0,0,0,0.08)';
+    });
+    
+    // Améliorer la navigation au clavier
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
         });
     });
     
     // Afficher les messages existants comme toast
     <?php if (!empty($success_message)): ?>
-    showToast('<?php echo addslashes($success_message); ?>', 'success', 8000);
+        showToast('<?php echo addslashes($success_message); ?>', 'success', 8000);
     <?php endif; ?>
     
     <?php if (!empty($error_message)): ?>
-    showToast('<?php echo addslashes($error_message); ?>', 'error', 10000);
+        showToast('<?php echo addslashes($error_message); ?>', 'error', 10000);
     <?php endif; ?>
     
-    // Vérifier la connectivité
+    // Gestion des erreurs de chargement
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        img.addEventListener('error', function() {
+            this.style.display = 'none';
+        });
+    });
+    
+    // Statistiques en temps réel
+    function updateStats() {
+        const statusElements = document.querySelectorAll('.solution-status');
+        const stats = {
+            pending: 0,
+            accepted: 0,
+            rejected: 0
+        };
+        
+        statusElements.forEach(element => {
+            const status = element.textContent.toLowerCase();
+            if (status.includes('attente')) stats.pending++;
+            else if (status.includes('acceptée')) stats.accepted++;
+            else if (status.includes('rejetée')) stats.rejected++;
+        });
+        
+        // Mettre à jour le titre de la page avec les stats
+        const totalSolutions = stats.pending + stats.accepted + stats.rejected;
+        if (totalSolutions > 0) {
+            document.title = 'Notifications (' + totalSolutions + ') - CodeChallenge';
+        }
+        
+        return stats;
+    }
+    
+    updateStats();
+    
+    // Gestion des formulaires avec loading
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.disabled) {
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement...';
+                
+                // Réactiver après 10 secondes en cas de problème
+                setTimeout(() => {
+                    if (submitBtn.disabled) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                }, 10000);
+            }
+        });
+    });
+    
+    // Fonction pour actualiser automatiquement la page (optionnel)
+    <?php if ($filter === 'pending'): ?>
+    function enableAutoRefresh(intervalMinutes = 5) {
+        const refreshInterval = intervalMinutes * 60 * 1000;
+        setTimeout(() => {
+            if (document.visibilityState === 'visible' && confirm('Actualiser la page pour voir les nouvelles solutions?')) {
+                window.location.reload();
+            } else {
+                enableAutoRefresh(intervalMinutes);
+            }
+        }, refreshInterval);
+    }
+    enableAutoRefresh(5);
+    <?php endif; ?>
+    
+    // Gestion des états de connexion
+    window.addEventListener('online', () => {
+        showToast('Connexion rétablie', 'success', 3000);
+    });
+    
+    window.addEventListener('offline', () => {
+        showToast('Connexion perdue', 'warning', 5000);
+    });
+    
+    // Vérifier la connectivité au chargement
     if (!navigator.onLine) {
         showToast('Vous êtes hors ligne. Certaines fonctionnalités peuvent ne pas fonctionner.', 'warning', 8000);
     }
     
+    // Fonction pour sauvegarder l'état de la page
+    function savePageState() {
+        const state = {
+            filter: '<?php echo $filter; ?>',
+            page: <?php echo $page; ?>,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('userFeedbackState', JSON.stringify(state));
+    }
+    
+    savePageState();
+    
+    // Raccourcis clavier
+    document.addEventListener('keydown', function(e) {
+        // Ctrl + R pour actualiser
+        if (e.ctrlKey && e.key === 'r') {
+            e.preventDefault();
+            window.location.reload();
+        }
+        
+        // Échap pour fermer les toasts
+        if (e.key === 'Escape') {
+            const toasts = document.querySelectorAll('[style*="position: fixed"][style*="top: 20px"]');
+            toasts.forEach(toast => {
+                if (toast.style.transform !== 'translateX(100%)') {
+                    toast.click();
+                }
+            });
+        }
+    });
+    
+    // Performance monitoring
+    if (window.performance) {
+        const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+        if (loadTime > 3000) {
+            console.warn('Page chargée lentement:', loadTime + 'ms');
+        }
+    }
+    
+    // Debug logs si mode debug activé
+    <?php if ($debug_mode): ?>
+    console.log('[DEBUG] Mode debug activé');
+    console.log('[DEBUG] Filtre actuel:', '<?php echo $filter; ?>');
+    console.log('[DEBUG] Page actuelle:', <?php echo $page; ?>);
+    console.log('[DEBUG] Total solutions:', <?php echo $total_count; ?>);
+    console.log('[DEBUG] Solutions affichées:', document.querySelectorAll('.solution-card').length);
+    <?php endif; ?>
+    
+    // Marquer la page comme entièrement chargée
+    document.body.classList.add('page-loaded');
+    
     // Afficher un message si aucune solution n'est trouvée mais que l'utilisateur a des problèmes
-    <?php if ($total_count == 0 && isset($user_problems_count) && $user_problems_count > 0): ?>
+      <?php if ($total_count == 0 && isset($user_problems_count) && $user_problems_count > 0): ?>
     showToast('Vous avez publié des problèmes mais n\'avez pas encore reçu de solutions.', 'info', 6000);
     <?php endif; ?>
     
-    // Mettre à jour le titre de la page avec les stats
-    const totalSolutions = <?php echo $total_count; ?>;
-    if (totalSolutions > 0) {
-        document.title = 'Notifications (' + totalSolutions + ') - CodeChallenge';
-    }
-    
-    console.log('✅ Page user_feedback.php chargée avec succès');
-    console.log('📊 Solutions affichées: ' + cards.length);
-    console.log('🔍 Filtre actuel: <?php echo $filter; ?>');
-    console.log('📄 Page actuelle: <?php echo $page; ?>');
-    console.log('📈 Total solutions: <?php echo $total_count; ?>');
+    console.log('Page user_feedback.php chargée avec succès');
+    console.log('Solutions affichées: ' + document.querySelectorAll('.solution-card').length);
+    console.log('Filtre actuel: <?php echo $filter; ?>');
+    console.log('Page actuelle: <?php echo $page; ?>');
+    console.log('Total solutions: <?php echo $total_count; ?>');
 });
 
-// ===== GESTION DES ERREURS =====
-
-// Gestion des erreurs globales
-window.addEventListener('error', function(e) {
-    console.error('❌ Erreur JavaScript:', e.error);
-    <?php if ($debug_mode): ?>
-    showToast('Erreur JavaScript: ' + e.message, 'error', 8000);
-    <?php endif; ?>
-});
-
-window.addEventListener('unhandledrejection', function(e) {
-    console.error('❌ Promise rejetée:', e.reason);
-    <?php if ($debug_mode): ?>
-    showToast('Promise rejetée: ' + e.reason, 'error', 8000);
-    <?php endif; ?>
-});
-
-// ===== RACCOURCIS CLAVIER =====
-
-document.addEventListener('keydown', function(e) {
-    // Ctrl + R pour actualiser
-    if (e.ctrlKey && e.key === 'r') {
-        e.preventDefault();
-        window.location.reload();
-    }
-    
-    // Échap pour fermer les toasts
-    if (e.key === 'Escape') {
-        const toasts = document.querySelectorAll('[style*="position: fixed"][style*="top: 20px"]');
-        toasts.forEach(toast => {
-            if (toast.style.transform !== 'translateX(100%)') {
-                toast.click();
-            }
-        });
-    }
-});
-
-// ===== GESTION DE LA CONNECTIVITÉ =====
-
-window.addEventListener('online', () => {
-    showToast('Connexion rétablie', 'success', 3000);
-});
-
-window.addEventListener('offline', () => {
-    showToast('Connexion perdue', 'warning', 5000);
-});
-
-// ===== FONCTION DE COPIE DU CODE =====
-
-function copyToClipboard(text) {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-            showToast('Code copié dans le presse-papiers', 'success', 2000);
-        }).catch(() => {
-            showToast('Erreur lors de la copie', 'error', 3000);
-        });
-    } else {
-        // Fallback pour les navigateurs plus anciens
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-            document.execCommand('copy');
-            showToast('Code copié dans le presse-papiers', 'success', 2000);
-        } catch (err) {
-            showToast('Erreur lors de la copie', 'error', 3000);
-        }
-        document.body.removeChild(textArea);
-    }
-}
-
-// Ajouter des boutons de copie pour le code
-document.addEventListener('DOMContentLoaded', function() {
-    const codeBlocks = document.querySelectorAll('.solution-content pre');
-    codeBlocks.forEach(block => {
-        const copyBtn = document.createElement('button');
-        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-        copyBtn.className = 'btn btn-outline';
-        copyBtn.style.cssText = `
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 8px;
-            font-size: 12px;
-            opacity: 0.7;
-            z-index: 10;
-        `;
-        copyBtn.title = 'Copier le code';
-        copyBtn.onclick = (e) => {
-            e.preventDefault();
-            copyToClipboard(block.textContent);
-        };
-        
-        const container = block.parentElement;
-        container.style.position = 'relative';
-        container.appendChild(copyBtn);
-        
-        // Afficher/masquer le bouton au survol
-        container.addEventListener('mouseenter', () => {
-            copyBtn.style.opacity = '1';
-        });
-        container.addEventListener('mouseleave', () => {
-            copyBtn.style.opacity = '0.7';
-        });
-    });
-});
-
-// ===== AUTO-REFRESH POUR LES SOLUTIONS EN ATTENTE =====
-
-<?php if ($filter === 'pending' && $total_count > 0): ?>
-function enableAutoRefresh(intervalMinutes = 5) {
-    const refreshInterval = intervalMinutes * 60 * 1000;
-    setTimeout(() => {
-        if (document.visibilityState === 'visible' && 
-            confirm('Actualiser la page pour voir les nouvelles solutions?')) {
-            window.location.reload();
-        } else {
-            enableAutoRefresh(intervalMinutes); // Redemander plus tard
-        }
-    }, refreshInterval);
-}
-
-// Activer l'auto-refresh pour les solutions en attente
-enableAutoRefresh(5);
-<?php endif; ?>
-
-// ===== GESTION DES NOTIFICATIONS PUSH =====
-
-<?php if (count($received_solutions) > 0 && $filter === 'pending'): ?>
-function requestNotificationPermission() {
-    if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                showToast('Notifications activées', 'success');
-            }
-        });
-    }
-}
-
-// Demander la permission pour les notifications
-requestNotificationPermission();
-<?php endif; ?>
-
-// ===== SAUVEGARDE DE L'ÉTAT DE LA PAGE =====
-
-function savePageState() {
-    const state = {
-        filter: '<?php echo $filter; ?>',
-        page: <?php echo $page; ?>,
-        timestamp: Date.now()
-    };
-    localStorage.setItem('userFeedbackState', JSON.stringify(state));
-}
-
-// Sauvegarder l'état lors des changements
-document.addEventListener('DOMContentLoaded', savePageState);
-
-// ===== VALIDATION DES FORMULAIRES =====
-
+// Fonction pour valider les formulaires côté client
 function validateForm(form) {
     const requiredFields = form.querySelectorAll('[required]');
     let isValid = true;
@@ -1249,8 +1148,12 @@ document.querySelectorAll('form').forEach(form => {
     });
 });
 
-// ===== FONCTION D'EXPORT DES DONNÉES (MODE DEBUG) =====
+// Fonction pour gérer les erreurs réseau
+function handleNetworkError() {
+    showToast('Erreur de connexion. Vérifiez votre connexion internet.', 'error', 8000);
+}
 
+// Fonction pour exporter les données (si en mode debug)
 <?php if ($debug_mode): ?>
 function exportSolutions() {
     const solutions = [];
@@ -1297,8 +1200,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 <?php endif; ?>
 
-// ===== FONCTION D'IMPRESSION =====
-
+// Fonction pour imprimer la page
 function printPage() {
     // Masquer les éléments non nécessaires pour l'impression
     const elementsToHide = document.querySelectorAll('.btn, .debug-info, .filter-section');
@@ -1320,82 +1222,60 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// ===== GESTION DES ERREURS DE CHARGEMENT D'IMAGES =====
-
-document.addEventListener('DOMContentLoaded', function() {
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-        img.addEventListener('error', function() {
-            this.style.display = 'none';
-        });
-    });
-});
-
-// ===== PERFORMANCE MONITORING =====
-
-if (window.performance) {
-    window.addEventListener('load', function() {
-        setTimeout(() => {
-            const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
-            if (loadTime > 3000) {
-                console.warn('⚠️ Page chargée lentement:', loadTime + 'ms');
-                <?php if ($debug_mode): ?>
-                showToast('Page chargée lentement: ' + (loadTime/1000).toFixed(1) + 's', 'warning', 5000);
-                <?php endif; ?>
+// Fonction pour gérer les notifications push (si supportées)
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                showToast('Notifications activées', 'success');
             }
-        }, 0);
-    });
+        });
+    }
 }
 
-// ===== FONCTION DE NETTOYAGE AU DÉCHARGEMENT =====
+// Demander la permission pour les notifications si on a des solutions en attente
+<?php if (count($received_solutions) > 0 && $filter === 'pending'): ?>
+requestNotificationPermission();
+<?php endif; ?>
 
+// Fonction pour créer une notification
+function createNotification(title, body, icon = '/favicon.ico') {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(title, {
+            body: body,
+            icon: icon,
+            tag: 'user-feedback'
+        });
+    }
+}
+
+// Fonction de nettoyage au déchargement de la page
 window.addEventListener('beforeunload', function() {
     // Nettoyer les timers et événements
     const timers = window.timers || [];
     timers.forEach(timer => clearTimeout(timer));
     
     // Sauvegarder l'état final
-    savePageState();
+    const state = {
+        filter: '<?php echo $filter; ?>',
+        page: <?php echo $page; ?>,
+        timestamp: Date.now()
+    };
+    localStorage.setItem('userFeedbackState', JSON.stringify(state));
 });
 
-// ===== AMÉLIORATION DE L'ACCESSIBILITÉ =====
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Ajouter des attributs ARIA
-    const cards = document.querySelectorAll('.solution-card');
-    cards.forEach((card, index) => {
-        card.setAttribute('role', 'article');
-        card.setAttribute('aria-label', 'Solution ' + (index + 1));
-    });
-    
-    // Améliorer la navigation au clavier
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(button => {
-        button.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-    });
-});
-
-// ===== FONCTION DE DÉBOGAGE =====
-
-function debugLog(message, data = null) {
-    <?php if ($debug_mode): ?>
-    console.log('[DEBUG] ' + message, data || '');
-    <?php endif; ?>
+// Fonction pour actualiser une section spécifique
+function refreshSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.style.opacity = '0.7';
+        setTimeout(() => {
+            section.style.opacity = '1';
+        }, 500);
+    }
 }
 
-// Logs de débogage
-debugLog('Mode debug activé');
-debugLog('Filtre actuel', '<?php echo $filter; ?>');
-debugLog('Page actuelle', <?php echo $page; ?>);
-debugLog('Total solutions', <?php echo $total_count; ?>);
-
-// ===== STYLES CSS SUPPLÉMENTAIRES =====
-
+// Gestion des animations CSS supplémentaires
 const additionalStyles = `
     .fade-in {
         animation: fadeIn 0.5s ease-in;
@@ -1404,6 +1284,26 @@ const additionalStyles = `
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .shake {
+        animation: shake 0.5s ease-in-out;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
     }
     
     .loading-overlay {
@@ -1471,26 +1371,17 @@ const additionalStyles = `
         opacity: 1;
     }
     
-    @media (max-width: 768px) {
-        .solution-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        
-        .solution-footer {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        
-        .solution-actions {
-            justify-content: center;
-        }
-        
-        .filter-row {
-            flex-direction: column;
-            align-items: stretch;
-        }
+    .page-loaded {
+        opacity: 1;
+    }
+    
+    body {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    body.page-loaded {
+        opacity: 1;
     }
 `;
 
@@ -1499,17 +1390,8 @@ const styleSheet = document.createElement('style');
 styleSheet.textContent = additionalStyles;
 document.head.appendChild(styleSheet);
 
-// ===== INITIALISATION FINALE =====
-
+// Initialiser les tooltips
 document.addEventListener('DOMContentLoaded', function() {
-    // Marquer la page comme entièrement chargée
-    document.body.classList.add('page-loaded');
-    
-    // Ajouter des classes d'animation aux éléments
-    const cards = document.querySelectorAll('.solution-card');
-    cards.forEach(card => card.classList.add('fade-in'));
-    
-    // Initialiser les tooltips si nécessaire
     const tooltipElements = document.querySelectorAll('[title]');
     tooltipElements.forEach(element => {
         element.classList.add('tooltip');
@@ -1519,26 +1401,39 @@ document.addEventListener('DOMContentLoaded', function() {
         element.appendChild(tooltipText);
         element.removeAttribute('title');
     });
-    
-    debugLog('✅ Initialisation finale terminée');
 });
 
+// Fonction utilitaire pour déboguer
+function debugLog(message, data = null) {
+    <?php if ($debug_mode): ?>
+    console.log('[DEBUG] ' + message, data || '');
+    <?php endif; ?>
+}
+
+// Amélioration de l'accessibilité
+document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter des attributs ARIA
+    const cards = document.querySelectorAll('.solution-card');
+    cards.forEach((card, index) => {
+        card.setAttribute('role', 'article');
+        card.setAttribute('aria-label', 'Solution ' + (index + 1));
+        card.classList.add('fade-in');
+    });
+});
+
+// Gestion des erreurs globales
+window.addEventListener('error', function(e) {
+    console.error('Erreur JavaScript:', e.error);
+    debugLog('Erreur JavaScript', e.error);
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('Promise rejetée:', e.reason);
+    debugLog('Promise rejetée', e.reason);
+});
 </script>
 
 <?php
-// Additional scripts
-$additional_scripts = "
-    // Scripts supplémentaires si nécessaire
-    console.log('📄 Page user_feedback.php entièrement chargée');
-    console.log('📊 Statistiques:');
-    console.log('  - Solutions affichées: " . count($received_solutions) . "');
-    console.log('  - Total solutions: " . $total_count . "');
-    console.log('  - Filtre actuel: " . $filter . "');
-    console.log('  - Page actuelle: " . $page . "/" . $total_pages . "');
-    console.log('  - Mode debug: " . ($debug_mode ? 'activé' : 'désactivé') . "');
-";
-
 // Include footer
 include 'footer.php';
 ?>
-

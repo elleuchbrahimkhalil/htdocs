@@ -230,12 +230,12 @@ if ($problem_id <= 0) {
                 } else {
                     // Vérifier si l'utilisateur a déjà soumis une solution pour ce problème
                     $stmt = $conn->prepare("
-                        SELECT TOP 1 s.*, p.amount as price
+                        SELECT s.*, p.amount as price
                         FROM solutions s
                         LEFT JOIN prices p ON s.price_id = p.price_id
                         WHERE s.problem_id = ? AND s.user_id = ?
                         ORDER BY s.created_at DESC
-                        
+                        TOP 1
                     ");
                     $stmt->execute([$problem_id, $user_id]);
                     $existing_solution = $stmt->fetch(PDO::FETCH_ASSOC);

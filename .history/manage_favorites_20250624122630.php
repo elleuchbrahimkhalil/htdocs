@@ -3,20 +3,13 @@ session_start();
 require_once 'verification.php';
 require_once 'db_connect.php';
 
-// Headers pour les réponses JSON et POST
+// Headers pour les réponses JSON et les requêtes AJAX
 header('Content-Type: application/json');
 
 // Vérifier la connexion de l'utilisateur
 if (!isLoggedIn()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Non connecté']);
-    exit;
-}
-
-// Vérifier la méthode de requête
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
     exit;
 }
 
@@ -30,7 +23,7 @@ if (!isset($_POST['problem_id']) || !isset($_POST['favorite_action'])) {
     exit;
 }
 
-$problem_id = (int)$_POST['problem_id'];
+$problemId = (int)$_POST['problem_id'];
 $action = $_POST['favorite_action'];
 
 // Valider l'action
@@ -41,7 +34,7 @@ if (!in_array($action, ['add', 'remove'])) {
 }
 
 // Valider l'ID du problème
-if ($problem_id <= 0) {
+if ($problemId <= 0) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'ID de problème invalide']);
     exit;
@@ -56,8 +49,7 @@ try {
     
     // Vérifier que le problème existe
     $stmt = $pdo->prepare("SELECT problem_id FROM problems WHERE problem_id = ?");
-    $stmt->execute([$problem_id]);
-    
+    $stmt->execute([$problemId]);
     if (!$stmt->fetch()) {
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Problème non trouvé']);
@@ -65,58 +57,60 @@ try {
     }
     
     if ($action === 'add') {
-        // Ajouter aux favoris (éviter les doublons)
-        $stmt = $pdo->prepare("
-            INSERT IGNORE INTO favorites (user_id, problem_id, created_at) 
-            VALUES (?, ?, CURRENT_TIMESTAMP)
-        ");
-        $result = $stmt->execute([$user['id'], $problem_id]);
+        // Vérifier si le favori existe déjà
+        $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = ? AND problem_id = ?");
+        $stmt->execute([$user['id'], $problemId]);
         
-        if ($result) {
-            // Compter le nouveau nombre de favoris
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE problem_id = ?");
-            $stmt->execute([$problem_id]);
-            $favorite_count = $stmt->fetchColumn();
-            
-            echo json_encode([
-                'success' => true, 
-                'message' => 'Ajouté aux favoris',
-                'action' => 'added',
-                'favorite_count' => (int)$favorite_count
-            ]);
+        if ($stmt->fetch()) {
+            // Déjà en favori
+            echo json_encode(['success' => true, 'message' => 'Déjà en favoris', 'action' => 'already_added']);
         } else {
-            throw new Exception("Erreur lors de l'ajout aux favoris");
+            // Ajouter aux favoris
+            $stmt = $pdo->prepare("INSERT INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)");
+            $result = $stmt->execute([$user['id'], $problemId]);
+            
+            if ($result) {
+                // Récupérer le nouveau nombre de favoris
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE problem_id = ?");
+                $stmt->execute([$problemId]);
+                $favoriteCount = $stmt->fetchColumn();
+                
+                echo json_encode([
+                    'success' => true, 
+                    'message' => 'Ajouté aux favoris',
+                    'action' => 'added',
+                    'favorite_count' => $favoriteCount
+                ]);
+            } else {
+                throw new Exception("Erreur lors de l'ajout aux favoris");
+            }
         }
         
     } elseif ($action === 'remove') {
         // Retirer des favoris
         $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND problem_id = ?");
-        $result = $stmt->execute([$user['id'], $problem_id]);
+        $result = $stmt->execute([$user['id'], $problemId]);
         
         if ($result) {
-            // Compter le nouveau nombre de favoris
+            // Récupérer le nouveau nombre de favoris
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM favorites WHERE problem_id = ?");
-            $stmt->execute([$problem_id]);
-            $favorite_count = $stmt->fetchColumn();
+            $stmt->execute([$problemId]);
+            $favoriteCount = $stmt->fetchColumn();
             
             echo json_encode([
                 'success' => true, 
                 'message' => 'Retiré des favoris',
                 'action' => 'removed',
-                'favorite_count' => (int)$favorite_count
+                'favorite_count' => $favoriteCount
             ]);
         } else {
             throw new Exception("Erreur lors de la suppression des favoris");
         }
     }
     
-} catch (PDOException $e) {
-    error_log("Erreur PDO dans manage_favorites.php: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur de base de données']);
 } catch (Exception $e) {
     error_log("Erreur dans manage_favorites.php: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur serveur']);
+    echo json_encode(['success' => false, 'message' => 'Erreur serveur: ' . $e->getMessage()]);
 }
 ?>
