@@ -922,84 +922,103 @@ include 'header.php';
 <?php
 // Additional scripts - VERSION CORRIGÉE AVEC DEBUG
 $additional_scripts = "
-    // Ajout dans le script existant de user_feedback.php
-    // Fonction de confirmation avec diagnostic amélioré
+    // Fonctions de confirmation avec messages clairs
     function confirmAccept(problemTitle, price) {
-        console.log('🔧 DIAGNOSTIC: Fonction confirmAccept appelée');
-        console.log('Problem Title:', problemTitle);
-        console.log('Price:', price);
-        
         const message = '🎯 ACCEPTER CETTE SOLUTION\\n\\n' +
                        '📝 Problème: ' + problemTitle + '\\n' +
                        '💰 Prix à payer: ' + price + ' €\\n\\n' +
                        '✅ En acceptant, vous serez automatiquement redirigé vers la page de paiement.\\n' +
                        '⚠️ Cette action ne peut pas être annulée.\\n\\n' +
                        'Voulez-vous continuer ?';
-        
-        const result = confirm(message);
-        console.log('🔧 DIAGNOSTIC: Confirmation result:', result);
-        
-        if (result) {
-            console.log('🔧 DIAGNOSTIC: Utilisateur a confirmé, soumission du formulaire...');
-            
-            // Ajouter un indicateur visuel
-            const form = event.target.closest('form');
-            if (form) {
-                const submitBtn = form.querySelector('button[type=\"submit\"]');
-                if (submitBtn) {
-                    submitBtn.style.background = '#f39c12';
-                    submitBtn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Traitement en cours...';
+        return confirm(message);
+    }
+    
+    function confirmReject(problemTitle) {
+        const message = '❌ REJETER CETTE SOLUTION\\n\\n' +
+                       '📝 Problème: ' + problemTitle + '\\n\\n' +
+                       '⚠️ Cette action est définitive et ne peut pas être annulée.\\n' +
+                       '❗ Le développeur sera notifié du rejet.\\n\\n' +
+                       'Êtes-vous sûr de vouloir rejeter cette solution ?';
+        return confirm(message);
+    }
+    
+    // Gestion des formulaires avec loading et feedback visuel
+    document.querySelectorAll('form[method=\"POST\"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type=\"submit\"]');
+            if (submitBtn && !submitBtn.disabled) {
+                const originalText = submitBtn.innerHTML;
+                const isAccept = submitBtn.name === 'accept_solution';
+                
+                // Debug: Log de soumission
+                " . ($debug_mode ? "console.log('DEBUG: Soumission du formulaire', {action: submitBtn.name, solutionId: form.querySelector('input[name=\"solution_id\"]').value});" : "") . "
+                
+                // Délai court pour permettre la soumission
+                setTimeout(() => {
                     submitBtn.disabled = true;
-                }
+                    if (isAccept) {
+                        submitBtn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Redirection vers le paiement...';
+                        submitBtn.style.backgroundColor = '#28a745';
+                        
+                        // Debug: Log de redirection attendue
+                        " . ($debug_mode ? "console.log('DEBUG: Redirection vers payment.php attendue');" : "") . "
+                    } else {
+                        submitBtn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Traitement du rejet...';
+                        submitBtn.style.backgroundColor = '#dc3545';
+                    }
+                    submitBtn.style.opacity = '0.8';
+                    
+                    // Désactiver tous les autres boutons de la carte
+                    const card = form.closest('.solution-card');
+                    if (card) {
+                        const allButtons = card.querySelectorAll('button, .btn');
+                        allButtons.forEach(btn => {
+                            if (btn !== submitBtn) {
+                                btn.style.opacity = '0.5';
+                                btn.style.pointerEvents = 'none';
+                            }
+                        });
+                    }
+                }, 100);
             }
-            
-            // Logger l'état avant soumission
-            setTimeout(() => {
-                console.log('🔧 DIAGNOSTIC: État avant soumission');
-                console.log('- URL actuelle:', window.location.href);
-                console.log('- Formulaire trouvé:', !!form);
-                console.log('- Headers sent:', document.readyState);
-            }, 100);
-        }
-        
-        return result;
-    }
-
-    // Surveillance des redirections
-    let redirectionAttempted = false;
-    const originalLocation = window.location.href;
-
-    // Surveiller les changements d'URL
-    setInterval(() => {
-        if (window.location.href !== originalLocation && !redirectionAttempted) {
-            redirectionAttempted = true;
-            console.log('🔧 DIAGNOSTIC: Redirection détectée !');
-            console.log('- URL originale:', originalLocation);
-            console.log('- Nouvelle URL:', window.location.href);
-        }
-    }, 500);
-
-    // Surveiller les erreurs JavaScript
-    window.addEventListener('error', function(e) {
-        console.error('🔧 DIAGNOSTIC: Erreur JavaScript détectée:', e.error);
-        console.error('- Message:', e.message);
-        console.error('- Fichier:', e.filename);
-        console.error('- Ligne:', e.lineno);
+        });
     });
-
-    // Test de connectivité
-    function testConnectivity() {
-        fetch(window.location.href, { method: 'HEAD' })
-            .then(response => {
-                console.log('🔧 DIAGNOSTIC: Connectivité OK - Status:', response.status);
-            })
-            .catch(error => {
-                console.error('🔧 DIAGNOSTIC: Problème de connectivité:', error);
-            });
-    }
-
-    // Tester la connectivité au chargement
-    document.addEventListener('DOMContentLoaded', testConnectivity);
+    
+    // Debug: Vérification de la page au chargement
+    " . ($debug_mode ? "
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔧 DEBUG user_feedback.php:');
+        console.log('👤 User ID: " . $user_id . "');
+        console.log('🔍 Filtre actuel: " . $filter . "');
+        console.log('📄 Page actuelle: " . $page . "');
+        console.log('📊 Total solutions: " . $total_count . "');
+        console.log('📋 Solutions affichées:', document.querySelectorAll('.solution-card').length);
+        console.log('⏳ Solutions en attente:', document.querySelectorAll('.solution-status.pending').length);
+        console.log('✅ Solutions acceptées:', document.querySelectorAll('.solution-status.accepted, .solution-status.approved, .solution-status.approve, .solution-status.accept').length);
+        
+        // Vérifier les liens de paiement
+        const paymentLinks = document.querySelectorAll('a[href*=\"payment.php\"]');
+        console.log('💳 Liens de paiement trouvés:', paymentLinks.length);
+        paymentLinks.forEach((link, index) => {
+            console.log('  Lien ' + (index + 1) + ':', link.href);
+        });
+        
+        // Vérifier les formulaires d'acceptation
+        const acceptForms = document.querySelectorAll('form button[name=\"accept_solution\"]');
+        console.log('✅ Boutons d\\'acceptation trouvés:', acceptForms.length);
+        
+        // Test de redirection (fonction utilitaire)
+        window.testPaymentRedirect = function(solutionId) {
+            const url = 'payment.php?solution_id=' + solutionId + '&debug=1';
+            console.log('🧪 Test de redirection vers:', url);
+            if (confirm('Tester la redirection vers la page de paiement?')) {
+                window.location.href = url;
+            }
+        };
+        
+        console.log('💡 Tapez testPaymentRedirect(SOLUTION_ID) pour tester une redirection');
+    });
+    " : "") . "
     
     // Fonction utilitaire pour copier du texte
     function copyToClipboard(text) {

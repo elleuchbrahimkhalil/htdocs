@@ -4,15 +4,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Test de diagnostic - Vérifier si on revient de payment.php
-if (isset($_GET['payment_error'])) {
-    $_SESSION['error_message'] = "DIAGNOSTIC: Retour de payment.php avec erreur: " . htmlspecialchars($_GET['payment_error']);
-}
-
-if (isset($_GET['payment_debug'])) {
-    $_SESSION['error_message'] = "DIAGNOSTIC: Retour de payment.php - " . htmlspecialchars($_GET['payment_debug']);
-}
-
 // Inclure les fichiers nécessaires AVANT tout traitement
 require_once 'verification.php';
 require_once 'db_connect.php';
@@ -32,9 +23,6 @@ if (!$user_id) {
     exit;
 }
 
-// Mode debug - SEULEMENT pour l'admin
-$debug_mode = isset($_GET['debug']) && $_GET['debug'] == '1' && $user_id == 1;
-
 // Initialiser les variables
 $received_solutions = [];
 $error_message = '';
@@ -49,12 +37,11 @@ $offset = ($page - 1) * $per_page;
 $total_count = 0;
 $total_pages = 0;
 
+// Mode debug
+$debug_mode = isset($_GET['debug']) && $_GET['debug'] == '1';
+
 // TRAITEMENT DES ACTIONS POST AVANT TOUT OUTPUT HTML
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Test de diagnostic
-    error_log("DIAGNOSTIC: POST reçu dans user_feedback.php");
-    error_log("DIAGNOSTIC: POST data: " . print_r($_POST, true));
-    
     try {
         $pdo = connect();
         
@@ -64,8 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (isset($_POST['accept_solution'])) {
             $solution_id = isset($_POST['solution_id']) ? (int)$_POST['solution_id'] : 0;
-            
-            error_log("DIAGNOSTIC: Tentative d'acceptation de la solution ID: $solution_id");
             
             if ($solution_id > 0) {
                 // Vérifier que la solution existe et appartient à un problème de l'utilisateur
@@ -78,11 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 $stmt->execute([$solution_id, $user_id]);
                 $solution = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                error_log("DIAGNOSTIC: Solution trouvée: " . ($solution ? 'OUI' : 'NON'));
-                if ($solution) {
-                    error_log("DIAGNOSTIC: Status actuel: " . $solution['status']);
-                }
                 
                 if ($solution) {
                     if ($solution['status'] === 'pending') {
@@ -99,10 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             
                             $result = $stmt->execute([$solution_id]);
                             
-                            error_log("DIAGNOSTIC: Mise à jour réussie: " . ($result ? 'OUI' : 'NON'));
-                            error_log("DIAGNOSTIC: Lignes affectées: " . $stmt->rowCount());
-                            
-                            if ($result) {
+                            if ($result && $stmt->rowCount() > 0) {
                                 // Mettre à jour les points de l'utilisateur qui a soumis la solution
                                 $stmt = $pdo->prepare("
                                     UPDATE users
@@ -114,98 +91,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 // Valider la transaction
                                 $pdo->commit();
                                 
-                                error_log("DIAGNOSTIC: Transaction validée, préparation de la redirection");
-                                
-                                // REDIRECTION IMMÉDIATE - NETTOYAGE DU BUFFER
-                                if (ob_get_level()) {
-                                    ob_end_clean();
-                                }
+                                // REDIRECTION IMMÉDIATE vers la page de paiement
+                                $_SESSION['success_message'] = "Solution acceptée avec succès. Redirection vers le paiement...";
                                 
                                 // Construire l'URL de redirection
-                                $redirect_url = "payment.php?solution_id=" . $solution_id . "&test=1";
+                                $redirect_url = "payment.php?solution_id=" . $solution_id;
                                 if ($debug_mode) {
                                     $redirect_url .= "&debug=1";
                                 }
                                 
-                                error_log("DIAGNOSTIC: Tentative de redirection vers: " . $redirect_url);
-                                
-                                // Test 1: Vérifier si les headers sont déjà envoyés
-                                if (headers_sent($file, $line)) {
-                                    error_log("DIAGNOSTIC: ERREUR - Headers déjà envoyés dans $file ligne $line");
-                                    $_SESSION['error_message'] = "DIAGNOSTIC: Headers déjà envoyés dans $file ligne $line";
-                                } else {
-                                    error_log("DIAGNOSTIC: Headers OK, envoi de la redirection");
-                                    
-                                    // Test 2: Redirection avec diagnostic
-                                    header("Location: " . $redirect_url, true, 302);
-                                    header("Cache-Control: no-cache, must-revalidate");
-                                    
-                                    error_log("DIAGNOSTIC: Headers de redirection envoyés");
-                                    
-                                    // Test 3: JavaScript de secours avec diagnostic
-                                    echo '<!DOCTYPE html><html><head><title>Redirection</title></head><body>';
-                                    echo '<script type="text/javascript">';
-                                    echo 'console.log("DIAGNOSTIC: Redirection JavaScript vers ' . $redirect_url . '");';
-                                    echo 'window.location.href="' . $redirect_url . '";';
-                                    echo '</script>';
-                                    echo '<noscript>';
-                                    echo '<meta http-equiv="refresh" content="0;url=' . $redirect_url . '">';
-                                    echo '</noscript>';
-                                    echo '<h1>Redirection en cours...</h1>';
-                                    echo '<p>DIAGNOSTIC: Si vous voyez ce message, la redirection a échoué.</p>';
-                                    echo '<p><a href="' . $redirect_url . '">Cliquez ici pour continuer vers le paiement</a></p>';
-                                    echo '</body></html>';
-                                    
-                                    error_log("DIAGNOSTIC: Page de redirection affichée");
-                                    exit();
+                                // Debug: Log de la redirection
+                                if ($debug_mode) {
+                                    error_log("DEBUG: Redirection vers: " . $redirect_url);
                                 }
+                                
+                                // Redirection avec flush pour s'assurer que les headers sont envoyés
+                                header("Location: " . $redirect_url);
+                                exit(); // ARRÊT COMPLET DE L'EXÉCUTION
                                 
                             } else {
                                 $pdo->rollBack();
-                                error_log("DIAGNOSTIC: Échec de la mise à jour de la solution");
                                 throw new Exception("Impossible de mettre à jour le statut de la solution");
                             }
                             
                         } catch (PDOException $e) {
                             $pdo->rollBack();
-                            error_log("DIAGNOSTIC: Erreur PDO lors de l'acceptation: " . $e->getMessage());
-                            $_SESSION['error_message'] = "DIAGNOSTIC: Erreur PDO - " . $e->getMessage();
-                        } catch (Exception $e) {
-                            $pdo->rollBack();
-                            error_log("DIAGNOSTIC: Erreur générale lors de l'acceptation: " . $e->getMessage());
-                            $_SESSION['error_message'] = "DIAGNOSTIC: Erreur générale - " . $e->getMessage();
+                            error_log("Erreur PDO lors de l'acceptation: " . $e->getMessage());
+                            $_SESSION['error_message'] = "Erreur lors de l'acceptation de la solution: " . $e->getMessage();
                         }
                         
                     } else {
-                        error_log("DIAGNOSTIC: Solution déjà évaluée - statut: " . $solution['status']);
-                        $_SESSION['error_message'] = "DIAGNOSTIC: Solution déjà évaluée (statut: " . $solution['status'] . ").";
+                        $_SESSION['error_message'] = "Cette solution a déjà été évaluée (statut: " . $solution['status'] . ").";
                     }
                 } else {
-                    error_log("DIAGNOSTIC: Solution non trouvée pour ID: $solution_id, User: $user_id");
-                    $_SESSION['error_message'] = "DIAGNOSTIC: Solution introuvable (ID: $solution_id, User: $user_id).";
+                    $_SESSION['error_message'] = "Solution introuvable ou vous n'êtes pas autorisé à l'accepter.";
                 }
             } else {
-                error_log("DIAGNOSTIC: ID de solution invalide: $solution_id");
-                $_SESSION['error_message'] = "DIAGNOSTIC: ID de solution invalide ($solution_id).";
+                $_SESSION['error_message'] = "ID de solution invalide.";
             }
             
-            // Si on arrive ici, il y a eu une erreur
-            error_log("DIAGNOSTIC: Redirection d'erreur vers user_feedback.php");
-            if (!headers_sent()) {
-                $redirect_url = $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page&error_test=1";
-                if ($debug_mode) {
-                    $redirect_url .= "&debug=1";
-                }
-                header("Location: $redirect_url");
-                exit;
+            // Redirection après erreur
+            $redirect_url = $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page";
+            if ($debug_mode) {
+                $redirect_url .= "&debug=1";
             }
+            header("Location: $redirect_url");
+            exit;
         }
         
-        // Traitement du rejet (inchangé)
         if (isset($_POST['reject_solution'])) {
             $solution_id = isset($_POST['solution_id']) ? (int)$_POST['solution_id'] : 0;
             
             if ($solution_id > 0) {
+                // Vérifier que la solution existe et appartient à un problème de l'utilisateur
                 $stmt = $pdo->prepare("
                     SELECT s.*, p.user_id as problem_owner
                     FROM solutions s
@@ -219,6 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($solution) {
                     if ($solution['status'] === 'pending') {
                         try {
+                            // Mettre à jour le statut de la solution à 'rejected'
                             $stmt = $pdo->prepare("
                                 UPDATE solutions
                                 SET status = 'rejected', evaluated_at = CURRENT_TIMESTAMP
@@ -248,6 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['error_message'] = "ID de solution invalide.";
             }
             
+            // Redirection après traitement du rejet
             $redirect_url = $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page";
             if ($debug_mode) {
                 $redirect_url .= "&debug=1";
@@ -257,10 +197,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
     } catch (PDOException $e) {
-        error_log("DIAGNOSTIC: Erreur PDO générale: " . $e->getMessage());
-        $_SESSION['error_message'] = "DIAGNOSTIC: Erreur de base de données - " . $e->getMessage();
+        $_SESSION['error_message'] = "Erreur de base de données: " . $e->getMessage();
+        error_log("Erreur PDO lors du traitement POST dans user_feedback.php: " . $e->getMessage());
         
-        $redirect_url = $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page&db_error=1";
+        $redirect_url = $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page";
         if ($debug_mode) {
             $redirect_url .= "&debug=1";
         }
@@ -268,10 +208,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
         
     } catch (Exception $e) {
-        error_log("DIAGNOSTIC: Erreur générale: " . $e->getMessage());
-        $_SESSION['error_message'] = "DIAGNOSTIC: Erreur lors du traitement - " . $e->getMessage();
+        $_SESSION['error_message'] = "Erreur lors du traitement: " . $e->getMessage();
+        error_log("Erreur lors du traitement POST dans user_feedback.php: " . $e->getMessage());
         
-        $redirect_url = $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page&general_error=1";
+        $redirect_url = $_SERVER['PHP_SELF'] . "?filter=$filter&page=$page";
         if ($debug_mode) {
             $redirect_url .= "&debug=1";
         }
@@ -279,9 +219,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
-
-// Le reste du code reste identique...
-// [Continuez avec le code de récupération des données et l'affichage]
 
 // RÉCUPÉRATION DES DONNÉES (après traitement POST) - LOGIQUE ORIGINALE RESTAURÉE
 try {
@@ -922,84 +859,103 @@ include 'header.php';
 <?php
 // Additional scripts - VERSION CORRIGÉE AVEC DEBUG
 $additional_scripts = "
-    // Ajout dans le script existant de user_feedback.php
-    // Fonction de confirmation avec diagnostic amélioré
+    // Fonctions de confirmation avec messages clairs
     function confirmAccept(problemTitle, price) {
-        console.log('🔧 DIAGNOSTIC: Fonction confirmAccept appelée');
-        console.log('Problem Title:', problemTitle);
-        console.log('Price:', price);
-        
         const message = '🎯 ACCEPTER CETTE SOLUTION\\n\\n' +
                        '📝 Problème: ' + problemTitle + '\\n' +
                        '💰 Prix à payer: ' + price + ' €\\n\\n' +
                        '✅ En acceptant, vous serez automatiquement redirigé vers la page de paiement.\\n' +
                        '⚠️ Cette action ne peut pas être annulée.\\n\\n' +
                        'Voulez-vous continuer ?';
-        
-        const result = confirm(message);
-        console.log('🔧 DIAGNOSTIC: Confirmation result:', result);
-        
-        if (result) {
-            console.log('🔧 DIAGNOSTIC: Utilisateur a confirmé, soumission du formulaire...');
-            
-            // Ajouter un indicateur visuel
-            const form = event.target.closest('form');
-            if (form) {
-                const submitBtn = form.querySelector('button[type=\"submit\"]');
-                if (submitBtn) {
-                    submitBtn.style.background = '#f39c12';
-                    submitBtn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Traitement en cours...';
+        return confirm(message);
+    }
+    
+    function confirmReject(problemTitle) {
+        const message = '❌ REJETER CETTE SOLUTION\\n\\n' +
+                       '📝 Problème: ' + problemTitle + '\\n\\n' +
+                       '⚠️ Cette action est définitive et ne peut pas être annulée.\\n' +
+                       '❗ Le développeur sera notifié du rejet.\\n\\n' +
+                       'Êtes-vous sûr de vouloir rejeter cette solution ?';
+        return confirm(message);
+    }
+    
+    // Gestion des formulaires avec loading et feedback visuel
+    document.querySelectorAll('form[method=\"POST\"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type=\"submit\"]');
+            if (submitBtn && !submitBtn.disabled) {
+                const originalText = submitBtn.innerHTML;
+                const isAccept = submitBtn.name === 'accept_solution';
+                
+                // Debug: Log de soumission
+                " . ($debug_mode ? "console.log('DEBUG: Soumission du formulaire', {action: submitBtn.name, solutionId: form.querySelector('input[name=\"solution_id\"]').value});" : "") . "
+                
+                // Délai court pour permettre la soumission
+                setTimeout(() => {
                     submitBtn.disabled = true;
-                }
+                    if (isAccept) {
+                        submitBtn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Redirection vers le paiement...';
+                        submitBtn.style.backgroundColor = '#28a745';
+                        
+                        // Debug: Log de redirection attendue
+                        " . ($debug_mode ? "console.log('DEBUG: Redirection vers payment.php attendue');" : "") . "
+                    } else {
+                        submitBtn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Traitement du rejet...';
+                        submitBtn.style.backgroundColor = '#dc3545';
+                    }
+                    submitBtn.style.opacity = '0.8';
+                    
+                    // Désactiver tous les autres boutons de la carte
+                    const card = form.closest('.solution-card');
+                    if (card) {
+                        const allButtons = card.querySelectorAll('button, .btn');
+                        allButtons.forEach(btn => {
+                            if (btn !== submitBtn) {
+                                btn.style.opacity = '0.5';
+                                btn.style.pointerEvents = 'none';
+                            }
+                        });
+                    }
+                }, 100);
             }
-            
-            // Logger l'état avant soumission
-            setTimeout(() => {
-                console.log('🔧 DIAGNOSTIC: État avant soumission');
-                console.log('- URL actuelle:', window.location.href);
-                console.log('- Formulaire trouvé:', !!form);
-                console.log('- Headers sent:', document.readyState);
-            }, 100);
-        }
-        
-        return result;
-    }
-
-    // Surveillance des redirections
-    let redirectionAttempted = false;
-    const originalLocation = window.location.href;
-
-    // Surveiller les changements d'URL
-    setInterval(() => {
-        if (window.location.href !== originalLocation && !redirectionAttempted) {
-            redirectionAttempted = true;
-            console.log('🔧 DIAGNOSTIC: Redirection détectée !');
-            console.log('- URL originale:', originalLocation);
-            console.log('- Nouvelle URL:', window.location.href);
-        }
-    }, 500);
-
-    // Surveiller les erreurs JavaScript
-    window.addEventListener('error', function(e) {
-        console.error('🔧 DIAGNOSTIC: Erreur JavaScript détectée:', e.error);
-        console.error('- Message:', e.message);
-        console.error('- Fichier:', e.filename);
-        console.error('- Ligne:', e.lineno);
+        });
     });
-
-    // Test de connectivité
-    function testConnectivity() {
-        fetch(window.location.href, { method: 'HEAD' })
-            .then(response => {
-                console.log('🔧 DIAGNOSTIC: Connectivité OK - Status:', response.status);
-            })
-            .catch(error => {
-                console.error('🔧 DIAGNOSTIC: Problème de connectivité:', error);
-            });
-    }
-
-    // Tester la connectivité au chargement
-    document.addEventListener('DOMContentLoaded', testConnectivity);
+    
+    // Debug: Vérification de la page au chargement
+    " . ($debug_mode ? "
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔧 DEBUG user_feedback.php:');
+        console.log('👤 User ID: " . $user_id . "');
+        console.log('🔍 Filtre actuel: " . $filter . "');
+        console.log('📄 Page actuelle: " . $page . "');
+        console.log('📊 Total solutions: " . $total_count . "');
+        console.log('📋 Solutions affichées:', document.querySelectorAll('.solution-card').length);
+        console.log('⏳ Solutions en attente:', document.querySelectorAll('.solution-status.pending').length);
+        console.log('✅ Solutions acceptées:', document.querySelectorAll('.solution-status.accepted, .solution-status.approved, .solution-status.approve, .solution-status.accept').length);
+        
+        // Vérifier les liens de paiement
+        const paymentLinks = document.querySelectorAll('a[href*=\"payment.php\"]');
+        console.log('💳 Liens de paiement trouvés:', paymentLinks.length);
+        paymentLinks.forEach((link, index) => {
+            console.log('  Lien ' + (index + 1) + ':', link.href);
+        });
+        
+        // Vérifier les formulaires d'acceptation
+        const acceptForms = document.querySelectorAll('form button[name=\"accept_solution\"]');
+        console.log('✅ Boutons d\\'acceptation trouvés:', acceptForms.length);
+        
+        // Test de redirection (fonction utilitaire)
+        window.testPaymentRedirect = function(solutionId) {
+            const url = 'payment.php?solution_id=' + solutionId + '&debug=1';
+            console.log('🧪 Test de redirection vers:', url);
+            if (confirm('Tester la redirection vers la page de paiement?')) {
+                window.location.href = url;
+            }
+        };
+        
+        console.log('💡 Tapez testPaymentRedirect(SOLUTION_ID) pour tester une redirection');
+    });
+    " : "") . "
     
     // Fonction utilitaire pour copier du texte
     function copyToClipboard(text) {

@@ -27,16 +27,16 @@ try {
         throw new Exception("Erreur de connexion à la base de données");
     }
     
-  $stmt = $pdo->prepare("
-    SELECT p.*, s.solution_code, s.explanation, 
-           pr.title as problem_title, pr.description as problem_description,
-           u.username as solver_username, u.name as solver_name
-    FROM payments p
-    JOIN solutions s ON p.solution_id = s.id
-    JOIN problems pr ON s.problem_id = pr.problem_id
-    JOIN users u ON s.user_id = u.id
-    WHERE p.payment_id = ? AND p.payer_id = ?
-");
+    $stmt = $pdo->prepare("
+        SELECT p.*, s.solution_code, s.explanation, 
+               pr.title as problem_title, pr.description as problem_description,
+               u.username as solver_username, u.name as solver_name
+        FROM payments pay
+        JOIN solutions s ON pay.solution_id = s.id
+        JOIN problems pr ON s.problem_id = pr.problem_id
+        JOIN users u ON s.user_id = u.id
+        WHERE pay.id = ? AND pay.payer_id = ?
+    ");
     
     $stmt->execute([$payment_id, $user_id]);
     $payment = $stmt->fetch(PDO::FETCH_ASSOC);

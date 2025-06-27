@@ -4,6 +4,7 @@ session_start();
 // Test de diagnostic au début
 error_log("DIAGNOSTIC: Accès à payment.php");
 error_log("DIAGNOSTIC: GET params: " . print_r($_GET, true));
+error_log("DIAGNOSTIC: SESSION: " . print_r($_SESSION, true));
 
 require_once 'verification.php';
 require_once 'db_connect.php';
@@ -48,7 +49,17 @@ try {
     
     error_log("DIAGNOSTIC: Connexion DB réussie dans payment.php");
     
-    // Récupérer les détails de la solution
+    // Test de diagnostic - Vérifier d'abord si la solution existe
+    $debug_stmt = $pdo->prepare("SELECT id, status FROM solutions WHERE id = ?");
+    $debug_stmt->execute([$solution_id]);
+    $debug_solution = $debug_stmt->fetch(PDO::FETCH_ASSOC);
+    
+    error_log("DIAGNOSTIC: Solution existe: " . ($debug_solution ? 'OUI' : 'NON'));
+    if ($debug_solution) {
+        error_log("DIAGNOSTIC: Status de la solution: " . $debug_solution['status']);
+    }
+    
+    // Récupérer les détails de la solution - REQUÊTE COMPLÈTE AVEC DIAGNOSTIC
     $stmt = $pdo->prepare("
         SELECT s.*, p.title as problem_title, p.description as problem_description, 
                p.user_id as problem_owner_id, pr.amount, pr.currency,
@@ -64,11 +75,45 @@ try {
     $solution = $stmt->fetch(PDO::FETCH_ASSOC);
     
     error_log("DIAGNOSTIC: Solution complète trouvée: " . ($solution ? 'OUI' : 'NON'));
+    if ($solution) {
+        error_log("DIAGNOSTIC: Status = " . ($solution['status'] ?? 'NULL'));
+        error_log("DIAGNOSTIC: Problem owner = " . ($solution['problem_owner_id'] ?? 'NULL'));
+        error_log("DIAGNOSTIC: Amount = " . ($solution['amount'] ?? 'NULL'));
+        error_log("DIAGNOSTIC: Problem title = " . ($solution['problem_title'] ?? 'NULL'));
+    } else {
+        // Debug détaillé pour comprendre pourquoi la solution n'est pas trouvée
+        error_log("DIAGNOSTIC: Recherche détaillée...");
+        
+        // Vérifier si la solution existe
+        $debug_stmt = $pdo->prepare("SELECT * FROM solutions WHERE id = ?");
+        $debug_stmt->execute([$solution_id]);
+        $debug_solution = $debug_stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($debug_solution) {
+            error_log("DIAGNOSTIC: Solution existe - problem_id = " . $debug_solution['problem_id']);
+            
+            // Vérifier le problème
+            $debug_stmt2 = $pdo->prepare("SELECT * FROM problems WHERE problem_id = ?");
+            $debug_stmt2->execute([$debug_solution['problem_id']]);
+            $debug_problem = $debug_stmt2->fetch(PDO::FETCH_ASSOC);
+            
+            if ($debug_problem) {
+                error_log("DIAGNOSTIC: Problème existe - owner = " . $debug_problem['user_id'] . ", current user = $user_id");
+                if ($debug_problem['user_id'] != $user_id) {
+                    error_log("DIAGNOSTIC: PROBLÈME - L'utilisateur n'est pas le propriétaire du problème");
+                }
+            } else {
+                error_log("DIAGNOSTIC: PROBLÈME - Le problème n'existe pas");
+            }
+        } else {
+            error_log("DIAGNOSTIC: PROBLÈME - La solution n'existe pas du tout");
+        }
+    }
     
     if (!$solution) {
         error_log("DIAGNOSTIC: Redirection - solution non trouvée");
         $_SESSION['error_message'] = "DIAGNOSTIC: Solution non trouvée ou vous n'êtes pas autorisé à y accéder. (solution_id=$solution_id, user_id=$user_id)";
-        header('Location: user_feedback.php?payment_error=solution_not_found');
+        header('Location: user_feedback.php?payment_error=solution_not_found&solution_id=' . $solution_id . '&user_id=' . $user_id);
         exit;
     }
     
@@ -76,27 +121,30 @@ try {
     $valid_statuses = ['accepted', 'approved', 'approve', 'accept'];
     if (!in_array($solution['status'], $valid_statuses)) {
         error_log("DIAGNOSTIC: Statut invalide - " . $solution['status']);
-        $_SESSION['error_message'] = "DIAGNOSTIC: Cette solution n'est pas prête pour le paiement (statut: " . $solution['status'] . ").";
-        header('Location: user_feedback.php?payment_error=invalid_status');
+        $_SESSION['error_message'] = "DIAGNOSTIC: Cette solution n'est pas prête pour le paiement (statut: " . $solution['status'] . "). Statuts valides: " . implode(', ', $valid_statuses);
+        header('Location: user_feedback.php?payment_error=invalid_status&status=' . urlencode($solution['status']));
         exit;
     }
     
-    // Vérifier si le paiement a déjà été effectué - CORRIGÉ
-    $stmt = $pdo->prepare("SELECT payment_id, status FROM payments WHERE solution_id = ? AND payer_id = ?");
+    // Vérifier si le paiement a déjà été effectué
+    $stmt = $pdo->prepare("SELECT id, status FROM payments WHERE solution_id = ? AND payer_id = ?");
     $stmt->execute([$solution_id, $user_id]);
     $existing_payment = $stmt->fetch();
     
     if ($existing_payment) {
-        error_log("DIAGNOSTIC: Paiement déjà effectué - ID " . $existing_payment['payment_id']);
-        $_SESSION['error_message'] = "DIAGNOSTIC: Cette solution a déjà été payée (Paiement #" . $existing_payment['payment_id'] . ").";
-        header('Location: user_feedback.php?payment_error=already_paid');
+        error_log("DIAGNOSTIC: Paiement déjà effectué - ID " . $existing_payment['id']);
+        $_SESSION['error_message'] = "DIAGNOSTIC: Cette solution a déjà été payée (Paiement #" . $existing_payment['id'] . ").";
+        header('Location: user_feedback.php?payment_error=already_paid&payment_id=' . $existing_payment['id']);
         exit;
     }
     
     error_log("DIAGNOSTIC: Toutes les vérifications passées - affichage de la page de paiement");
     
+    // Si on arrive ici, tout est OK pour afficher la page de paiement
+    
 } catch (Exception $e) {
     error_log("DIAGNOSTIC: Exception dans payment.php: " . $e->getMessage());
+    error_log("DIAGNOSTIC: Stack trace: " . $e->getTraceAsString());
     $_SESSION['error_message'] = "DIAGNOSTIC: Erreur lors du chargement de la page de paiement - " . $e->getMessage();
     header('Location: user_feedback.php?payment_error=exception&message=' . urlencode($e->getMessage()));
     exit;
@@ -125,21 +173,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
             
             error_log("DIAGNOSTIC: Transaction ID = $transaction_id");
             
-            // Insérer le paiement dans la base de données - CORRIGÉ
+            // Insérer le paiement dans la base de données
             $stmt = $pdo->prepare("
                 INSERT INTO payments (
-                    solution_id, payer_id, payee_id, amount, payment_method, 
-                    transaction_id, status, payment_date, created_at
+                    solution_id, payer_id, amount, currency, payment_method, 
+                    transaction_id, status, payment_date
                 ) VALUES (
-                    ?, ?, ?, ?, ?, ?, 'completed', GETDATE(), GETDATE()
+                    ?, ?, ?, ?, ?, ?, 'completed', CURRENT_TIMESTAMP
                 )
             ");
             
             $result = $stmt->execute([
                 $solution_id,
                 $user_id,
-                $solution['user_id'], // payee_id = l'ID du développeur
                 $amount,
+                $solution['currency'] ?? 'EUR',
                 $payment_method,
                 $transaction_id
             ]);
@@ -178,12 +226,193 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_payment'])) {
     }
 }
 
-// Le reste du code HTML reste identique...
+// Configuration de la page
 $page_title = "Paiement de Solution";
+$additional_css = "
+    .diagnostic-info {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-family: monospace;
+        font-size: 12px;
+    }
+    
+    .diagnostic-info h4 {
+        margin-top: 0;
+        color: #856404;
+    }
+    
+    .debug-info {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-family: monospace;
+        font-size: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .debug-info h4 {
+        margin-top: 0;
+        color: #495057;
+    }
+    
+    .payment-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .payment-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    .payment-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .payment-header h1 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+    }
+    
+    .payment-header p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 16px;
+    }
+    
+    .payment-body {
+        padding: 30px;
+    }
+    
+    .solution-summary {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-left: 4px solid #3498db;
+    }
+    
+    .solution-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .solution-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .solution-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .solution-preview {
+        background: #f1f2f6;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .price-breakdown {
+        background: white;
+        border: 2px solid #27ae60;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .price-breakdown h3 {
+        color: #27ae60;
+        margin-top: 0;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .price-row:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        font-size: 18px;
+        color: #27ae60;
+        border-top: 2px solid #27ae60;
+        margin-top: 10px;
+        padding-top: 15px;
+    }
+    
+    .btn {
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        background: #27ae60;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #219653;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    }
+    
+    .btn-outline {
+        background: transparent;
+        color: #3498db;
+        border: 2px solid #3498db;
+    }
+    
+    .btn-outline:hover {
+        background: #3498db;
+        color: white;
+    }
+";
+
+// Include header
 include 'header.php';
 ?>
-
-<!-- Le HTML reste identique à la version précédente -->
 
 <div class="payment-container">
     <!-- Informations de diagnostic -->
