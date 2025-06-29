@@ -42,7 +42,7 @@ try {
     
     if ($action === 'add') {
         // Ajouter aux favoris (éviter les doublons)
-        $stmt = $pdo->prepare("INSERT IGNORE INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, NOW())");
+        $stmt = $pdo->prepare("INSERT IGNORE INTO favorites (user_id, problem_id, created_at) VALUES (?, ?, GETDATE())");
         $result = $stmt->execute([$user['id'], $problemId]);
         $message = 'Ajouté aux favoris!';
     } else {
