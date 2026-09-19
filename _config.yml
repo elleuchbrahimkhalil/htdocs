@@ -3,3 +3,8 @@ title: Mon Site Statique
 description: Site hébergé sur GitHub Pages
 url: "https://elleuchbrahimkhalil.github.io"
 baseurl: "/htdocs"
+exclude:
+  - .history
+  - _site
+  - vendor
+  - node_modules
